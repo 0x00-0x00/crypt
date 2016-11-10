@@ -30,7 +30,7 @@ except ImportError:
     import_error("gevent")
     exit(-1)
 
-__VERSION__ = 1.6
+__VERSION__ = 1.7
 __author__ = "shemhazai"
 __revision__ = "2016/11/10"
 shredlogger = shemutils.Logger("Shred")
