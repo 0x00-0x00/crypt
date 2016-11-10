@@ -165,8 +165,6 @@ class Crypter(object):
 
     def _do_encrypt_files(self):
         self.logger.info("Starting encryption procedure ...")
-        d = 0  # done variable
-        e = 0  # errors variable
         t = len(self.ffiles)  # num of files
         j = []
         k1 = time()
@@ -203,12 +201,10 @@ class Crypter(object):
         self.logger.info("Total time elapsed: {0}".format(format_time(k2-k1)))
         if t > 1:
             self.logger.info("Time mean: %.2f" % ((k2-k1)/float(t)))
-        return d, e
+        return 0, 0
 
     def _do_decrypt_files(self):
         self.logger.info("Starting decryption procedure ...")
-        d = 0  # done variable
-        e = 0  # errors variable
         j = []
         t = len(self.ffiles)
         k1 = time()
@@ -243,7 +239,7 @@ class Crypter(object):
         self.logger.info("Total time elapsed: {0}".format(k2-k1))
         if t > 1:
             self.logger.info("Time mean: %.2f" % ((k2-k1)/float(t)))
-        return d, e
+        return 0, 0
 
     def _count_files(self):
         x = len(self.ffiles)
