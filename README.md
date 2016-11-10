@@ -12,16 +12,22 @@ Python program to encrypt files using AES-256bit cryptography and shred unencryp
 > To install this program you need to issue the following commands on your terminal:
 >> To install gevent: 
 >> `git clone https://github.com/gevent/gevent.git`
+
 >> `cd gevent/`
+
 >> `sudo python setup.py install`
 
 >> To install shemutils:
 >> `git clone https://github.com/0x00-0x00/shemutils.git`
+
 >> `cd shemutils/`
+
 >> `sudo python setup.py install`
 
 >> To install "encrypt":
 >> `git clone https://github.com/0x00-0x00/encrypt.git`
+
 >> `cd shemutils/`
+
 >> `sudo python setup.py install`
 
