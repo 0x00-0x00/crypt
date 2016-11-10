@@ -7,22 +7,32 @@ import os
 
 from sys import exit, stdout
 
+
+def import_error(pkg):
+    """
+    Prints to the screen an error message and informing which package is missing
+    :param pkg:
+    :return: void
+    """
+    print "Error: You need to install the package: {0}".format(pkg)
+    return
+
 try:
     import shemutils
 except ImportError:
-    print "Erro: Você precisa instalar o módulo shemutils para utilizar esse programa."
+    import_error("shemutils")
     exit(-1)
 
 try:
     import gevent
     from gevent.event import Event
 except ImportError:
-    print "Erro: Voce precisa instalar o modulo gevent para utilizar esse programa."
+    import_error("gevent")
     exit(-1)
 
 __VERSION__ = 1.6
 __author__ = "shemhazai"
-__revision__ = "2016/11/09"
+__revision__ = "2016/11/10"
 shredlogger = shemutils.Logger("Shred")
 
 
@@ -122,25 +132,25 @@ class Crypter(object):
         '# Mode option'
         self.mode = [args.encrypt, args.decrypt]
         if not self._do_parsing():
-            self.logger.critical("Erro de validação.")
+            self.logger.critical("Validation error")
             exit(1)
         self.key = shemutils.Encryption.get_key(self.key_bits)
 
-        '# Inicia o programa'
+        '# Program start'
         if self.file is not None:
-            '# Significa que o método de saída é de arquivos '
+            '# Means output will be file'
             if self.mode[0] is True:
                 self._do_encrypt_files()
             elif self.mode[1] is True:
                 self._do_decrypt_files()
 
         if self.msg is not None:
-            '# Significa que o método de saída é de mensagens. '
+            '# Means output will be message '
             if self.mode[0] is True:
-                self.logger.info("Cifra: ")
+                self.logger.info("Cipher: ")
                 write(self._do_encrypt_message())
             elif self.mode[1] is True:
-                self.logger.info("Mensagem: ")
+                self.logger.info("Message: ")
                 write(self._do_decrypt_message() + "\n")
 
     def _do_encrypt_message(self):
@@ -154,7 +164,7 @@ class Crypter(object):
         return plaintext
 
     def _do_encrypt_files(self):
-        self.logger.info("Iniciando procedimento de cifragem ...")
+        self.logger.info("Starting encryption procedure ...")
         d = 0  # done variable
         e = 0  # errors variable
         t = len(self.ffiles)  # num of files
@@ -173,30 +183,30 @@ class Crypter(object):
 
             '# Return information to the user that encryption function has started'
             if self.verbose:
-                self.logger.info("Cifragem do arquivo '{0}' iniciada.".format(f.name))
+                self.logger.info("Encryption of file '{0}' started.".format(f.name))
                 print ""
 
         '# Waits for encryption to finish.'
         gevent.joinall(j)
-        self.logger.info("Procedimento de cifragem completo.")
+        self.logger.info("Encryption procedure has been completed.")
 
         if self.unique.is_set():
             print ""
-            self.logger.info("Removendo arquivos ...")
+            self.logger.info("Shredding files ...")
             for f in self.ffiles:
                 if shred_file(f.name) == 0:
                     if not os.path.exists(f.name):
-                        self.logger.step_ok("Remocao de arquivo '{0}".format(os.path.abspath(f.name)))
+                        self.logger.step_ok("File shredded: '{0}".format(os.path.abspath(f.name)))
                     print ""
 
         k2 = time()
-        self.logger.info("Tempo total gasto: {0}".format(format_time(k2-k1)))
+        self.logger.info("Total time elapsed: {0}".format(format_time(k2-k1)))
         if t > 1:
-            self.logger.info("Media de tempo gasto entre arquivos: %.2f" % ((k2-k1)/float(t)))
+            self.logger.info("Time mean: %.2f" % ((k2-k1)/float(t)))
         return d, e
 
     def _do_decrypt_files(self):
-        self.logger.info("Iniciando procedimento de decifragem ...")
+        self.logger.info("Starting decryption procedure ...")
         d = 0  # done variable
         e = 0  # errors variable
         j = []
@@ -212,33 +222,33 @@ class Crypter(object):
 
             '# Returns information to the user '
             if self.verbose:
-                self.logger.info("Decifragem do arquivo '{0}' iniciada.".format(f.name))
+                self.logger.info("Decryption of file '{0}' started.".format(f.name))
 
         '# Wait for greenlet to finish.'
         gevent.joinall(j)
-        self.logger.info("Procedimento de decifragem completo.")
+        self.logger.info("Decryption procedure has been completed.")
 
         if self.unique.is_set():
             print ""
-            self.logger.info("Removendo arquivos ...")
+            self.logger.info("Deleting files ...")
             for f in self.ffiles:
                 os.remove(f.name)
                 if not os.path.exists(f.name):
-                    self.logger.info("Arquivo '{0}' removido.".format(os.path.abspath(f.name)))
+                    self.logger.info("File deleted: '{0}'".format(os.path.abspath(f.name)))
                 else:
-                    self.logger.warning("Arquivo '{0}' nao foi removido.".format(os.path.abspath(f.name)))
+                    self.logger.warning("File not deleted: '{0}'".format(os.path.abspath(f.name)))
                 print ""
 
         k2 = time()
-        self.logger.info("Tempo total gasto: {0}".format(k2-k1))
+        self.logger.info("Total time elapsed: {0}".format(k2-k1))
         if t > 1:
-            self.logger.info("Media de tempo gasto entre arquivos: %.2f" % ((k2-k1)/float(t)))
+            self.logger.info("Time mean: %.2f" % ((k2-k1)/float(t)))
         return d, e
 
     def _count_files(self):
         x = len(self.ffiles)
         if self.verbose:
-            self.logger.info("%d arquivos foram selecionados." % x)
+            self.logger.info("%d files were selected." % x)
         return x
 
     def _check_for_decryption(self):
@@ -246,7 +256,7 @@ class Crypter(object):
             f, e = os.path.splitext(x.name)
             b = os.path.basename(x.name)
             if e != ".enc":
-                self.logger.warning("Arquivo '{0}' não está encriptografado.".format(b))
+                self.logger.warning("File '{0}' is not encrypted.".format(b))
             else:
                 self.ffiles.add(x)
 
@@ -255,7 +265,7 @@ class Crypter(object):
             f, e = os.path.splitext(x.name)
             b = os.path.basename(x.name)
             if e == ".enc":
-                self.logger.warning("Arquivo {0} já está criptografado.".format(b))
+                self.logger.warning("File '{0}' is already encrypted.".format(b))
             else:
                 self.ffiles.add(x)
 
@@ -268,49 +278,39 @@ class Crypter(object):
         return True
 
     def _parse_options(self):
-        """
-        Essa função fará o parsing das opções.
-        A função retornará uma lista de duas booleans que indicarão
-        o estado das flags de checagem.
-        Não se admite erro em nenhuma etapa de checagem, portanto
-        por conta disso, a variável ERROR_FLAG é uma lista de duas
-        booleans falsas que servirá de retorno para quando a checa-
-        gem de lógicas inválidas forem detectadas.
-        :return:
-        """
 
         error_flag = [False, False]
         stats_flag = [False, False]
 
         "# This if conditional checks for a valid combination of arguments"
         if self.mode[0] is False and self.mode[1] is False:
-            self.logger.warning("Nem --encrypt ou --decrypt foram definidos.")
-            self.logger.error("É necessário definir um modo de operação!")
+            self.logger.warning("Neither --encrypt or --decrypt were set.")
+            self.logger.error("No mode of operation was set.")
             return error_flag
         elif self.mode[0] is True and self.mode[1] is True:
-            self.logger.warning("Ambos --encrypt e --decrypt foram definidos.")
-            self.logger.error("Só se admite a definição de um modo de operação!")
+            self.logger.warning("Both --encrypt e --decrypt were set.")
+            self.logger.error("Only one operation mode must be set.")
             return error_flag
         elif self.mode[0] is True:
-            self.logger.info("Modo de operação definido: Encriptação")
+            self.logger.info("Operation mode set to: Encryption")
             stats_flag[0] = True
         elif self.mode[1] is True:
-            self.logger.info("Modo de operação definido: Decriptação")
+            self.logger.info("Operation mode set to: Decryption")
             stats_flag[0] = True
 
-        "# Essa condicional checa as opções de saída (arquivo ou mensagem)"
+        "# This conditional checks if file or message"
         if self.file is None and self.msg is None:
-            self.logger.warning("Nenhuma opção de saída foi definida!")
-            self.logger.error("É necessário definir uma opção de saída! (--file ou --msg)")
+            self.logger.warning("No output option was set.")
+            self.logger.error("A valid output set is needed (--file ou --msg)")
             return error_flag
         elif self.file is not None and self.msg is not None:
-            self.logger.warning("Ambas opções de saídas foram definidas.")
-            self.logger.error("Só se admite a definição de uma opção de saída.")
+            self.logger.warning("Both output options were set.")
+            self.logger.error("Only one output option must be set.")
             return error_flag
         elif self.file is not None:
-            self.logger.info("Modo de saída definido: Arquivo")
+            self.logger.info("Output option set to: File")
             if len(self.file) < 1:
-                self.logger.warning("Nenhum arquivo foi mencionado.")
+                self.logger.warning("No file mentioned.")
                 return error_flag
             if self.mode[0] is True:  # encriptação
                 self._check_for_encryption()
@@ -319,7 +319,7 @@ class Crypter(object):
             self._count_files()
             stats_flag[1] = True
         elif self.msg is not None:
-            self.logger.info("Modo de saída definido: Mensagem")
+            self.logger.info("Output option set to: Message")
             if len(self.msg) < 1:
                 return error_flag
             stats_flag[1] = True
@@ -336,14 +336,14 @@ def main():
     file_group = parser.add_argument_group("FILE")
     mesg_group = parser.add_argument_group("MESG")
 
-    core_group.add_argument("--encrypt", dest="encrypt", action="store_true", help="Opera em modo Cifragem")
-    core_group.add_argument("--decrypt", dest="decrypt", action="store_true", help="Opera em modo Decifragem")
-    core_group.add_argument("-b", "--bits", help="Tamanho da chave em bits. Opções: 128, 256", default=256, type=int)
-    core_group.add_argument("-v", "--verbose", help="Ativa ou desativa o modo verbose.", action="store_true")
+    core_group.add_argument("--encrypt", dest="encrypt", action="store_true", help="Set operation mode to Encryption")
+    core_group.add_argument("--decrypt", dest="decrypt", action="store_true", help="Set operation mode to Decryption")
+    core_group.add_argument("-b", "--bits", help="Key size in bits. Options: 128, 256", default=256, type=int)
+    core_group.add_argument("-v", "--verbose", help="Verbose mode.", action="store_true")
     core_group.add_argument("-u", "--unique", help="Removes encrypted file when decrypts, remove unencrypted file"
                                                    " when encrypting", action="store_true")
-    file_group.add_argument("-f", "--file", help="Arquivo a ser cifrado ou decifrado.", nargs='+', type=FileType('rb+'))
-    mesg_group.add_argument("-m", "--msg", help="Mensagem a ser cifrada ou decifrada.")
+    file_group.add_argument("-f", "--file", help="File to be de/encrypted.", nargs='+', type=FileType('rb+'))
+    mesg_group.add_argument("-m", "--msg", help="Message to be de/encrypted")
 
     args = parser.parse_args()
 
@@ -352,7 +352,7 @@ def main():
     t2 = time()
 
     if args.verbose:
-        print "Duração do processo: %.2f segundos" % float(float(t2) - float(t1))
+        print "Process duration: %.2f seconds" % float(float(t2) - float(t1))
 
     return
 
