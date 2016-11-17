@@ -6,3 +6,4 @@ dist/
 .*.un~
 bin/*~
 *~
+crypt_eng.egg-info/
