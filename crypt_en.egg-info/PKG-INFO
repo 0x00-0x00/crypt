@@ -1,0 +1,16 @@
+Metadata-Version: 1.0
+Name: crypt-en
+Version: 1.8
+Summary: 
+Shemhazai`s cryptography utility for cryptography.
+
+    This program has the following features:
+        AES (128-256bit key) file and message cryptography,
+        Secure Key Storage system for Scripting cryptography.
+        
+Home-page: https://github.com/0x00-0x00/encrypt.git
+Author: Shemhazai
+Author-email: andre.marques@fatecp.sp.gov.br
+License: MIT
+Description: UNKNOWN
+Platform: UNKNOWN

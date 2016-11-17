@@ -26,8 +26,6 @@ Python program to encrypt files using AES-256bit cryptography and shred unencryp
 
 >> To install "encrypt":
 >> `git clone https://github.com/0x00-0x00/encrypt.git`
-
 >> `cd shemutils/`
-
 >> `sudo python setup.py install`
 

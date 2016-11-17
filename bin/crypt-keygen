@@ -1,0 +1,167 @@
+#!/usr/bin/env python
+
+
+#   Crypt-Keygen v.0.1
+#   Developed by shemhazai
+# --------------------------------------
+# Description:
+#   This program creates an RSA Key Pair and AES secret key
+#   To allow the sibling program - crypt - to encrypt files
+#   by running scripts, using these keys as substitution to
+#   the usual method of password hashing for key.
+#
+
+#
+#  CONFIGURATION VARIABLES
+#       SYMMETRIC ENCRYPTED KEY FILE: ~/.crypt/secret.key
+#       ASSYMETRIC KEYS LOCATION: USER DEFINED IN ~/.crypt/crypt.conf
+
+
+import argparse
+import os
+
+from shemcrypt.configuration import get_private_key_location, setup_full, home, config_file, \
+    secret_key_file
+from shemcrypt.shred import shred_file
+from gevent.event import Event
+from shemutils import RSA, Logger
+
+
+'# Static Data '
+keys = {
+        "public": ".pub.key",
+        "private": ".priv.key"
+    }
+
+
+class KeyNotSet(Exception):
+    pass
+
+
+class InvalidKeySize(Exception):
+    pass
+
+
+class Key(object):
+    """
+    Key object.
+    :param: bits -> Key size
+
+    Methods:
+        new() -> generate a key
+        get() -> returns a string with the key
+    """
+    def __init__(self, bits):
+        self.key_size = bits
+        self.key = ""
+        self.key_status = Event()
+
+    def new(self):
+        if self._key_validation() is True:
+            self.key = self._generate_key()
+            self.key_status.set()
+        return
+
+    def get(self, encoded=None):
+        if self.key_status.is_set() is True and encoded is None:
+            return self.key
+        elif self.key_status.is_set() is True and encoded is not None:
+            return self.key.encode("base64")
+        else:
+            raise KeyNotSet
+
+    def _generate_key(self):
+        return os.urandom(self.key_size)
+
+    def _key_validation(self):
+        if self.key_size % 2 != 0:
+            raise InvalidKeySize
+        return True
+
+
+def clean_all():
+    try:
+        files = [config_file, secret_key_file]
+        for fd in files:
+            if os.path.exists(fd):
+                shred_file(fd)
+    except Exception as e:
+        return e
+    return 0
+
+
+def check_keys_exists(key_location):
+    for key in keys:
+        if not os.path.isfile(key_location + os.sep + keys[key]):
+            return -1
+    return 0
+
+
+def write_symmetric_key(r, conf=secret_key_file):
+    try:
+        k = Key(32)  # 32x8 = 256 bits
+        k.new()
+        key = k.get(encoded=True)
+        cipher = r.encrypt_message(key, v=False)
+        with open(conf, "wb") as f:
+            f.write(cipher.encode("base64"))
+    except Exception as e:
+        return e
+    return 0
+
+
+def main():
+    logger = Logger("crypt-keygen")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--clean", action="store_true", required=False, help="Clean configuration file.")
+    args = parser.parse_args()
+
+    if args.clean is True:
+        if clean_all() != 0:
+            logger.error("Error cleaning configuration files and secret key.")
+            return -1
+        return 0
+
+    #  Set-up folder structure
+    if setup_full() != 0:
+        logger.error("Folder structure error")
+        return -1
+
+    # Get key location
+    key_location = get_private_key_location()
+    if not key_location:
+        logger.error("Private key location error")
+        return -1
+    else:
+        if not os.path.isdir(key_location):
+            logger.error("Private key location is not a directory.")
+            return -1
+
+    rsa_obj = RSA()
+    priv_f = key_location + keys["private"]
+    pub_f = key_location + keys["public"]
+    if check_keys_exists(key_location) != 0:
+        '# Create keys'
+        rsa_obj.generate_keypair()
+        rsa_obj.save_keys(priv_f=priv_f, pub_f=pub_f)
+        write_symmetric_key(rsa_obj)  # write symmetric key under RSA encryption
+    else:
+        '# Keys already exists. Checking if symmetric key exists... '
+        if not os.path.isfile(secret_key_file):  # symmetric key does not exists? trash all the
+            # asymmetric keys and configurations
+            os.remove(priv_f)
+            os.remove(pub_f)
+            if os.path.exists(config_file):
+                os.remove(config_file)
+            logger.info("Type 'crypt-keygen' again to generate a new pair of keys.")
+            return -1
+        else:
+            logger.info("Secret key file: {0}".format(secret_key_file))
+            logger.info("Private key location: {0}".format(key_location))
+            logger.info("Everything is ok.")
+
+    return 0
+
+
+if __name__ == "__main__":
+    main()

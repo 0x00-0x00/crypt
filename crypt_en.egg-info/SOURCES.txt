@@ -1,0 +1,12 @@
+setup.py
+bin/crypt
+bin/crypt-keygen
+crypt_en.egg-info/PKG-INFO
+crypt_en.egg-info/SOURCES.txt
+crypt_en.egg-info/dependency_links.txt
+crypt_en.egg-info/not-zip-safe
+crypt_en.egg-info/requires.txt
+crypt_en.egg-info/top_level.txt
+shemcrypt/__init__.py
+shemcrypt/configuration.py
+shemcrypt/shred.py
