@@ -13,7 +13,7 @@ DO NOT STORE IT IN HARD DRIVES. EVEN IF ENCRYPTED.
 """
 
 
-TEMPLATE = """"
+TEMPLATE = """
 # CONFIG FILE FOR CRYPT KEYGEN
 private_key_location=%s
 """
