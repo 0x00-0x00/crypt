@@ -18,13 +18,15 @@
 
 
 import argparse
-import os
 
+#  Import program modules
 from shemcrypt.configuration import get_private_key_location, setup_full, home, config_file, \
     secret_key_file
 from shemcrypt.shred import shred_file
-from gevent.event import Event
-from shemutils import RSA, Logger
+from shemcrypt.key import *
+
+#  Import program external modules
+from shemutils import RSA, Logger, Checksum
 
 
 '# Static Data '
@@ -32,51 +34,6 @@ keys = {
         "public": ".pub.key",
         "private": ".priv.key"
     }
-
-
-class KeyNotSet(Exception):
-    pass
-
-
-class InvalidKeySize(Exception):
-    pass
-
-
-class Key(object):
-    """
-    Key object.
-    :param: bits -> Key size
-
-    Methods:
-        new() -> generate a key
-        get() -> returns a string with the key
-    """
-    def __init__(self, bits):
-        self.key_size = bits
-        self.key = ""
-        self.key_status = Event()
-
-    def new(self):
-        if self._key_validation() is True:
-            self.key = self._generate_key()
-            self.key_status.set()
-        return
-
-    def get(self, encoded=None):
-        if self.key_status.is_set() is True and encoded is None:
-            return self.key
-        elif self.key_status.is_set() is True and encoded is not None:
-            return self.key.encode("base64")
-        else:
-            raise KeyNotSet
-
-    def _generate_key(self):
-        return os.urandom(self.key_size)
-
-    def _key_validation(self):
-        if self.key_size % 2 != 0:
-            raise InvalidKeySize
-        return True
 
 
 def clean_all():
@@ -97,23 +54,49 @@ def check_keys_exists(key_location):
     return 0
 
 
-def write_symmetric_key(r, conf=secret_key_file):
+def write_symmetric_key(r, secret_file=secret_key_file):
     try:
         k = Key(32)  # 32x8 = 256 bits
         k.new()
         key = k.get(encoded=True)
         cipher = r.encrypt_message(key, v=False)
-        with open(conf, "wb") as f:
+        with open(secret_file, "wb") as f:
             f.write(cipher.encode("base64"))
+
+        # Generate a SHA256 hash of the RSA-encrypted key-file and store it on the configuration folder
+        check = Checksum(secret_file, "sha256")
+        with open(secret_file + ".sha256", "wb") as f:
+            f.write(check.get())
+
     except Exception as e:
         return e
     return 0
 
 
+
+def keyfile_hash_verification():
+    """
+    check1 -> Extracts the current sha256 from secret_key file
+    check2 -> Reads the past sha256 from secret_key file
+    :return: -1 for IO error, 0 for success or 1 for hash difference
+    """
+    try:
+        check1 = Checksum(secret_key_file, "sha256").get()
+        check2 = open(secret_key_file + ".sha256", "rb").read()
+    except:
+        return -1
+
+    if check1 == check2:
+        return 0
+
+    return 1
+
+
 def main():
     logger = Logger("crypt-keygen")
     parser = argparse.ArgumentParser()
-    parser.add_argument("--clean", action="store_true", required=False, help="Clean configuration file.")
+    parser.add_argument("--clean", action="store_true", required=False, help="Clean configuration file;")
+    parser.add_argument("--check", action="store_true", required=False, help="Check key location and hashes;")
     args = parser.parse_args()
 
     if args.clean is True:
@@ -156,9 +139,17 @@ def main():
             logger.info("Type 'crypt-keygen' again to generate a new pair of keys.")
             return -1
         else:
-            logger.info("Secret key file: {0}".format(secret_key_file))
-            logger.info("Private key location: {0}".format(key_location))
-            logger.info("Everything is ok.")
+            #  Compares hash of secret file from stored in conf folder
+
+            #  h_st stands for Hash State
+            h_st = keyfile_hash_verification()
+            if h_st != 0:
+                logger.error("secret_key file sha256 hash differs from original key hash")
+                return 1
+            elif h_st == 0:
+                logger.info("Secret key file: {0}".format(secret_key_file))
+                logger.info("Private key location: {0}".format(key_location))
+                logger.info("Everything is ok.")
 
     return 0
 
