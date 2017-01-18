@@ -8,7 +8,6 @@ def shred_file(f, n=2):
     """
     Shred a file in a really tight secure manner
     :param f: string containing file name
-    :param r: string containing random generator file
     :param n: int containing number of passes
     :return: 0 if successful
     """
