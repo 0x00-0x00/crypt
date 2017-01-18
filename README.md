@@ -1,4 +1,4 @@
-# encrypt
+# crypt - version 1.9
 Python program to encrypt files using AES-256bit cryptography and shred unencrypted files securely at the end of the process.
 - - - - -
 ## What is this?
