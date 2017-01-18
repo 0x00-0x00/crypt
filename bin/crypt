@@ -5,9 +5,10 @@ from time import time
 from shemutils.shred import Shredder
 from argparse import ArgumentParser, FileType
 from shemcrypt.configuration import secret_key_file, get_private_key_location
+from shemcrypt.time import format_time
 import os
 
-from sys import exit, stdout
+from sys import exit, stdout, stderr
 
 
 def import_error(pkg):
@@ -32,41 +33,20 @@ except ImportError:
     import_error("gevent")
     exit(-1)
 
-__VERSION__ = 1.8
-__author__ = "shemhazai"
-__revision__ = "2016/11/16"
+__VERSION__ = 1.9
+__author__ = "zc00l"
+__revision__ = "2017/01/18"
 shredlogger = shemutils.Logger("Shred")
-
-
-def format_time(t):
-    days = 0.0
-    hours = 0.0
-    minutes = 0.0
-    if t > 86400:
-        days = (t / 86400)
-        hours = (t % 86400) / 3600
-        minutes = (t % 3600) / 60
-        seconds = ((t % 86400) % 3600) % 60
-    elif t > 3600:
-        hours = (t / 3600.0)
-        minutes = ((t % 3600) / 60)
-        seconds = ((t % 3600) % 60)
-    elif t > 60:
-        minutes = (t / 60)
-        seconds = (t % 60)
-    else:
-        seconds = t
-
-    return "%dd %2.fh %2.fm %2.fs" % (days, hours, minutes, seconds)
 
 
 write = stdout.write
 flush = stdout.flush
+errwrite = stderr.write
 
 
 def header():
-    print "[shemcrypt v. %.2f]" % __VERSION__
-    print "revision: %s" % __revision__
+    errwrite("[shemcrypt v. %.2f]\n" % __VERSION__)
+    errwrite("revision: %s\n" % __revision__)
 
 
 class KeyFile(object):
@@ -128,17 +108,21 @@ class Crypter(object):
             '# Means output will be file'
             if self.mode[0] is True:
                 self._do_encrypt_files()
+                return
             elif self.mode[1] is True:
                 self._do_decrypt_files()
+                return
 
         if self.msg is not None:
             '# Means output will be message '
             if self.mode[0] is True:
                 self.logger.info("Cipher: ")
                 write(self._do_encrypt_message())
+                return
             elif self.mode[1] is True:
                 self.logger.info("Message: ")
                 write(self._do_decrypt_message() + "\n")
+                return
 
     def _do_encrypt_message(self):
         iv = shemutils.Encryption.create_iv()
