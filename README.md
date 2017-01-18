@@ -16,9 +16,6 @@ THE RSA PRIVATE KEY MUST BE STORED IN A SAFE, MOBILE DEVICE MEDIA TO ENSURE DATA
 ## Requirements
 1. Linux 
 2. Python 2.7.12
-3. gevent
-4. rsa
-5. pycrypto
 
 ## How to install
 It is simple to start using this tool!
