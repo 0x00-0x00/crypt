@@ -14,34 +14,22 @@ By using this method - as it does not blocks with stdin inputs - enables the use
 THE RSA PRIVATE KEY MUST BE STORED IN A SAFE, MOBILE DEVICE MEDIA TO ENSURE DATA SAFETY.
 
 ## Requirements
-1. Linux (as it uses /dev/urandom)
+1. Linux 
 2. Python 2.7.12
 3. gevent
 4. rsa
 5. pycrypto
 
 ## How to install
-To install this program you need to issue the following commands on your terminal:
-> To install gevent: 
-```bash 
-cd /tmp
-git clone https://github.com/gevent/gevent.git
-cd gevent/
-sudo python setup.py install
+It is simple to start using this tool!
+
+**via curl**
+```bash
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/0x00-0x00/crypt/master/bootstrap.sh)"
 ```
 
-> To install shemutils:
+**via wget**
 ```bash
-cd /tmp
-git clone https://github.com/0x00-0x00/shemutils.git
-cd shemutils/
-sudo python setup.py install
+sh -c "$(wget https://raw.githubusercontent.com/0x00-0x00/crypt/master/bootstrap.sh -O -)"
 ```
 
-> To install "encrypt":
-```bash
-cd /tmp
-git clone https://github.com/0x00-0x00/encrypt.git
-cd encrypt/
-sudo python setup.py install
-```

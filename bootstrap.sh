@@ -69,4 +69,5 @@ check_exists "python" "python -V"
 # Work
 install_python_modules
 install_repo "shemutils" "https://github.com/0x00-0x00/shemutils.git"
+install_repo "crypt" "https://github.com/0x00-0x00/crypt.git"
 
