@@ -4,7 +4,7 @@ import os
 shredlogger = Logger("Shred")
 
 
-def shred_file(f, r="/dev/urandom", n=2):
+def shred_file(f, n=2):
     """
     Shred a file in a really tight secure manner
     :param f: string containing file name
@@ -17,10 +17,7 @@ def shred_file(f, r="/dev/urandom", n=2):
     if file_size < 0:
         return None
 
-    '# Get random generator file handle '
-    randfd = open(r)
-    patterns = [randfd.read(1) for x in xrange(n)]
-    randfd.close()
+    patterns = [os.urandom(1) for x in range(n)]
 
     x = 1  # count passes
 
