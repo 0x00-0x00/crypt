@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 # coding:utf-8
 
+import os
 from time import time
 from shemutils.shred import Shredder
 from argparse import ArgumentParser, FileType
 from shemcrypt.configuration import secret_key_file, get_private_key_location
 from shemcrypt.time import format_time
-import os
-
 from sys import exit, stdout, stderr
 
 
@@ -17,7 +16,7 @@ def import_error(pkg):
     :param pkg:
     :return: void
     """
-    print "Error: You need to install the package: {0}".format(pkg)
+    print("Error: You need to install the package: {0}".format(pkg))
     return
 
 try:
@@ -55,7 +54,7 @@ class KeyFile(object):
         self.key_location = get_private_key_location()
         self.rsa = shemutils.RSA()
         if not self.key_location:
-            print "Type 'crypt-keygen' to generate a key file."
+            print("Type 'crypt-keygen' to generate a key file.")
             exit(1)
         self.priv_f, self.pub_f = self.key_location + ".priv.key", self.key_location + ".pub.key"
         self.rsa.load_keys(priv_f=self.priv_f, pub_f=self.pub_f)
@@ -152,23 +151,19 @@ class Crypter(object):
 
             '# Return information to the user that encryption function has started'
             if self.verbose:
-                self.logger.info("Encryption of file '{0}' started.".format(f.name))
-                print ""
+                self.logger.info("Encryption of file '{0}' started.\n".format(f.name))
 
         '# Waits for encryption to finish.'
         gevent.joinall(j)
-        self.logger.info("Encryption procedure has been completed.")
+        self.logger.info("Encryption procedure has been completed.\n")
 
         if self.unique.is_set():
-            print ""
             self.logger.info("Shredding files ...")  # why not gevent??????
             for f in self.ffiles:
                 s = Shredder()
                 if s.shred(f.name) == 0:
                     if not os.path.exists(f.name):
-                        self.logger.step_ok("File shredded: '{0}".format(os.path.abspath(f.name)))
-                    print ""
-
+                        self.logger.step_ok("File shredded: '{0}\n".format(os.path.abspath(f.name)))
         k2 = time()
         self.logger.info("Total time elapsed: {0}".format(format_time(k2-k1)))
         if t > 1:
@@ -194,18 +189,16 @@ class Crypter(object):
 
         '# Wait for greenlet to finish.'
         gevent.joinall(j)
-        self.logger.info("Decryption procedure has been completed.")
+        self.logger.info("Decryption procedure has been completed.\n")
 
         if self.unique.is_set():
-            print ""
             self.logger.info("Deleting files ...")
             for f in self.ffiles:
                 os.remove(f.name)
                 if not os.path.exists(f.name):
                     self.logger.info("File deleted: '{0}'".format(os.path.abspath(f.name)))
                 else:
-                    self.logger.warning("File not deleted: '{0}'".format(os.path.abspath(f.name)))
-                print ""
+                    self.logger.warning("File not deleted: '{0}'\n".format(os.path.abspath(f.name)))
 
         k2 = time()
         self.logger.info("Total time elapsed: {0}".format(k2-k1))
@@ -322,7 +315,7 @@ def main():
     t2 = time()
 
     if args.verbose:
-        print "Process duration: %.2f seconds" % float(float(t2) - float(t1))
+        print("Process duration: %.2f seconds" % float(float(t2) - float(t1)))
 
     return
 
