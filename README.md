@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/0x00-0x00/crypt.png?label=ready&title=Ready)](https://waffle.io/0x00-0x00/crypt)
 # crypt - version 1.9
 Python program to encrypt files using AES-256bit cryptography and shred unencrypted files securely at the end of the process.
 - - - - -
