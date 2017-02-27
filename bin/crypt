@@ -148,13 +148,18 @@ class Crypter(object):
             '# Create initialization vector'
             iv = Encryption.create_iv()
 
-            Encryption.encrypt_file(f.name, self.key, iv)
+            '# Start an encryption greenlet '
+            g = gevent.spawn(Encryption.encrypt_file, f.name, self.key, iv)
+
+            '# Add it to job queue '
+            j.append(g)
 
             '# Return information to the user that encryption function has started'
             if self.verbose:
                 self.logger.info("Encryption of file '{0}' started.\n".format(f.name))
 
 
+        gevent.joinall(j)
         self.logger.info("Encryption procedure has been completed.\n")
 
         if self.unique.is_set():
