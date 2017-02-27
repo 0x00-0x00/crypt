@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # coding:utf-8
 
+import sys
 import os
+import base64
 from time import time
 from shemutils.shred import Shredder
 from shemutils.logger import Logger
@@ -118,7 +120,7 @@ class Crypter(object):
             '# Means output will be message '
             if self.mode[0] is True:
                 self.logger.info("Cipher: ")
-                write(self._do_encrypt_message())
+                write(self._do_encrypt_message().decode(sys.stdout.encoding))
                 return
             elif self.mode[1] is True:
                 self.logger.info("Message: ")
@@ -128,10 +130,11 @@ class Crypter(object):
     def _do_encrypt_message(self):
         iv = Encryption.create_iv()
         cipher = Encryption.encrypt_message(self.msg, self.key, iv)
-        return cipher.encode("base64")
+        cipher64 = base64.b64encode(cipher)
+        return cipher64
 
     def _do_decrypt_message(self):
-        decoded_cipher = self.msg.decode("base64")
+        decoded_cipher = base64.b64decode(self.msg)
         plaintext = Encryption.decrypt_message(decoded_cipher, self.key)
         return plaintext
 
