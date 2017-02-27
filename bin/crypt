@@ -161,7 +161,7 @@ class Crypter(object):
             self.logger.info("Shredding files ...")  # why not gevent??????
             for f in self.ffiles:
                 s = Shredder()
-                if s.shred(f.name) == 0:
+                if s.shred(f.name, remove=True) == 0:
                     if not os.path.exists(f.name):
                         self.logger.step_ok("File shredded: '{0}\n".format(os.path.abspath(f.name)))
         k2 = time()
@@ -193,8 +193,9 @@ class Crypter(object):
 
         if self.unique.is_set():
             self.logger.info("Deleting files ...")
+            shredder = Shredder()
             for f in self.ffiles:
-                os.remove(f.name)
+                shredder.shred(f.name, remove=True)
                 if not os.path.exists(f.name):
                     self.logger.info("File deleted: '{0}'".format(os.path.abspath(f.name)))
                 else:
