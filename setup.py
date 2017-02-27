@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='crypt-en',
-      version='1.9.2',
+      version='1.9.3',
       description="""
 Shemhazai`s cryptography utility for cryptography.\n
     This program has the following features:
