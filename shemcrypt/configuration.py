@@ -35,7 +35,7 @@ def set_up_main_folder():
 def create_folders(folders):
     for folder in folders:
         try:
-            mkdir(folder, 0777)
+            mkdir(folder)
             return 0
         except OSError as e:
             if e.errno == 17:
