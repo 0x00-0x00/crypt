@@ -4,6 +4,8 @@
 import os
 from time import time
 from shemutils.shred import Shredder
+from shemutils.logger import Logger
+from shemutils.encryption import Encryption
 from argparse import ArgumentParser, FileType
 from shemcrypt.configuration import secret_key_file, get_private_key_location
 from shemcrypt.time import format_time
@@ -35,7 +37,7 @@ except ImportError:
 __VERSION__ = 1.91
 __author__ = "zc00l"
 __revision__ = "2017/02/26"
-shredlogger = shemutils.Logger("Shred")
+shredlogger = Logger("Shred")
 
 
 write = stdout.write
@@ -63,7 +65,7 @@ class KeyFile(object):
         return self.rsa.decrypt_message(self.encrypted_data)
 
     def get(self):
-        return shemutils.Encryption.hash256(self._decrypt_key())
+        return Encryption.hash256(self._decrypt_key())
 
 
 class Crypter(object):
@@ -71,7 +73,7 @@ class Crypter(object):
     Main class
     """
     def __init__(self, args):
-        self.logger = shemutils.Logger("CRYPT")
+        self.logger = Logger("CRYPT")
         self.verbose = args.verbose
 
         '# Files options'
@@ -100,7 +102,7 @@ class Crypter(object):
             self.key = keyfile.get()
         else:
             '# Standard mode -> Password Hashing '
-            self.key = shemutils.Encryption.get_key(self.key_bits)
+            self.key = Encryption.get_key(self.key_bits)
 
         '# Program start'
         if self.file is not None:
@@ -124,13 +126,13 @@ class Crypter(object):
                 return
 
     def _do_encrypt_message(self):
-        iv = shemutils.Encryption.create_iv()
-        cipher = shemutils.Encryption.encrypt_message(self.msg, self.key, iv)
+        iv = Encryption.create_iv()
+        cipher = Encryption.encrypt_message(self.msg, self.key, iv)
         return cipher.encode("base64")
 
     def _do_decrypt_message(self):
         decoded_cipher = self.msg.decode("base64")
-        plaintext = shemutils.Encryption.decrypt_message(decoded_cipher, self.key)
+        plaintext = Encryption.decrypt_message(decoded_cipher, self.key)
         return plaintext
 
     def _do_encrypt_files(self):
@@ -141,20 +143,15 @@ class Crypter(object):
 
         for f in self.ffiles:
             '# Create initialization vector'
-            iv = shemutils.Encryption.create_iv()
+            iv = Encryption.create_iv()
 
-            '# Spawns a greenlet.'
-            g = gevent.spawn(shemutils.Encryption.encrypt_file, f.name, self.key, iv)
-
-            '# Append Greenlet to Greenlet Group'
-            j.append(g)
+            Encryption.encrypt_file(f.name, self.key, iv)
 
             '# Return information to the user that encryption function has started'
             if self.verbose:
                 self.logger.info("Encryption of file '{0}' started.\n".format(f.name))
 
-        '# Waits for encryption to finish.'
-        gevent.joinall(j)
+
         self.logger.info("Encryption procedure has been completed.\n")
 
         if self.unique.is_set():
@@ -178,7 +175,7 @@ class Crypter(object):
 
         for f in self.ffiles:
             '# Spawn new decryption thread'
-            g = gevent.spawn(shemutils.Encryption.decrypt_file, f.name, self.key)
+            g = gevent.spawn(Encryption.decrypt_file, f.name, self.key)
 
             '# Append greenlet to group'
             j.append(g)
