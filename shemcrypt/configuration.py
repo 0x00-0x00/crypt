@@ -42,7 +42,7 @@ def create_folders(folders):
                 pass
                 return 0
             else:
-                print "Error #%d: %s" % (e.errno, e.strerror)
+                print("Error #%d: %s" % (e.errno, e.strerror))
                 return e.errno
 
 
@@ -61,7 +61,7 @@ def get_private_key_location(conf="%s.crypt/crypt.conf" % home):
             return None
 
     if not path.isfile(conf):  # no configuration file == needs a key location
-        print INSTRUCTIONS  # give some good advice
+        print(INSTRUCTIONS)  # give some good advice
         k = raw_input("Give a valid location (folder) to store your private key: ")
         with open(conf, "wb") as f:
             f.write(TEMPLATE % k)
@@ -80,7 +80,7 @@ def get_private_key_location(conf="%s.crypt/crypt.conf" % home):
                     if key_location[len(key_location)-1] != sep:
                         key_location += sep
             except KeyError:
-                print "key error"
+                print("key error")
                 return -1
 
     return key_location
