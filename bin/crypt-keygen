@@ -26,7 +26,9 @@ from shemcrypt.shred import shred_file
 from shemcrypt.key import *
 
 #  Import program external modules
-from shemutils import RSA, Logger, Checksum
+from shemutils.logger import Logger
+from shemutils.encryption import RSA
+from shemutils.checksum import Checksum
 
 
 '# Static Data '
@@ -112,6 +114,7 @@ def main():
 
     # Get key location
     key_location = get_private_key_location()
+    logger.info("Key location: {0}".format(key_location))
     if not key_location:
         logger.error("Private key location error")
         return -1
