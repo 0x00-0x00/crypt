@@ -54,7 +54,7 @@ def get_private_key_location(conf="%s.crypt/crypt.conf" % home):
     """
     def get_location(data):
         pattern = "(?P<config_var>[a-z_]+)\s?=\s?(?P<value>[aA-zZ~\/\.]+)"
-        m = re.match(pattern, data)
+        m = re.match(pattern, data.decode())
         if m is not None:
             return m.groupdict()
         else:
@@ -62,16 +62,16 @@ def get_private_key_location(conf="%s.crypt/crypt.conf" % home):
 
     if not path.isfile(conf):  # no configuration file == needs a key location
         print(INSTRUCTIONS)  # give some good advice
-        k = raw_input("Give a valid location (folder) to store your private key: ")
+        k = input("Give a valid location (folder) to store your private key: ")
         with open(conf, "wb") as f:
-            f.write(TEMPLATE % k)
+            f.write((TEMPLATE % k).encode())
 
     file_data = open(conf, "rb").read()
     if len(file_data) < 1:
         return -1
 
     key_location = None
-    for line in file_data.split("\n"):
+    for line in file_data.split(b"\n"):
         if get_location(line):
             try:
                 x = get_location(line)

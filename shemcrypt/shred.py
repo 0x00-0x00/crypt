@@ -1,4 +1,4 @@
-from shemutils import Logger
+from shemutils.logger import Logger
 import os
 
 shredlogger = Logger("Shred")
