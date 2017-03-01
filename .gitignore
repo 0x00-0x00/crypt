@@ -8,6 +8,4 @@ bin/*~
 *~
 crypt_eng.egg-info/
 crypt_en.egg-info
-extras/keygen
-extras/keybatch01/
-extras/rng
+extras/
