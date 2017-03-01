@@ -20,6 +20,7 @@
 import argparse
 
 #  Import program modules
+import shemcrypt
 from shemcrypt.configuration import get_private_key_location, setup_full, home, config_file, \
     secret_key_file
 from shemcrypt.shred import shred_file
@@ -29,6 +30,11 @@ from shemcrypt.key import *
 from shemutils.logger import Logger
 from shemutils.encryption import RSA
 from shemutils.checksum import Checksum
+from sys import exit
+
+import base64
+import os
+import subprocess
 
 
 '# Static Data '
@@ -57,23 +63,29 @@ def check_keys_exists(key_location):
 
 
 def write_symmetric_key(r, secret_file=secret_key_file):
-    try:
-        k = Key(32)  # 32x8 = 256 bits
-        k.new()
-        key = k.get(encoded=True)
-        cipher = r.encrypt_message(key, v=False)
-        with open(secret_file, "wb") as f:
-            f.write(cipher.encode("base64"))
+    #  Uses the new RNG system avoiding os.urandom()
+    keygen = os.path.dirname(shemcrypt.__file__) + os.sep + "keygenerator"
+    if not os.path.exists(keygen):
+        print("[!] Error: Could not find key generator file. Maybe reinstall is needed.")
+        exit(1)
 
-        # Generate a SHA256 hash of the RSA-encrypted key-file and store it on the configuration folder
-        check = Checksum(secret_file, "sha256")
-        with open(secret_file + ".sha256", "wb") as f:
-            f.write(check.get())
+    #  Execute the key generator and retrieve a cryptographic base64-encoded key
+    proc = subprocess.Popen([keygen, "32"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    key, err = proc.communicate()
+    if key is None or key is "":
+        print("[!] Error: Could not generate a key.")
+        exit(1)
 
-    except Exception as e:
-        return e
+    cipher = r.encrypt_message(key, v=False)
+    print("Writing {0} bytes of secret_key into {0}".format(len(cipher), secret_file))
+    with open(secret_file, "wb") as f:
+        f.write(base64.b64encode(cipher))
+
+    # Generate a SHA256 hash of the RSA-encrypted key-file and store it on the configuration folder
+    check = Checksum(secret_file, "sha256")
+    with open(secret_file + ".sha256", "wb") as f:
+        f.write(check.get().encode())
     return 0
-
 
 
 def keyfile_hash_verification():

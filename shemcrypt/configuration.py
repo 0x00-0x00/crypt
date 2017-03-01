@@ -1,6 +1,7 @@
 from os import mkdir, path, environ, sep
 import re
 
+
 home = environ["HOME"] + sep
 config_file = "%s.crypt/crypt.conf" % home
 secret_key_file = "%s.crypt/secret_key" % home
@@ -20,30 +21,29 @@ private_key_location=%s
 
 
 def setup_full():
+    def set_up_main_folder():
+        def create_folders(flds):
+            for folder in flds:
+                try:
+                    mkdir(folder)
+                    return 0
+                except OSError as e:
+                    if e.errno == 17:
+                        pass
+                        return 0
+                    else:
+                        print("Error #%d: %s" % (e.errno, e.strerror))
+                        return e.errno
+
+        folders = ["%s/.crypt" % home]
+        if create_folders(folders) != 0:
+            return -1
+        return 0
+
+    #  Set-up all the required folders
     if set_up_main_folder() != 0:
         return -1
     return 0
-
-
-def set_up_main_folder():
-    folders = ["%s/.crypt" % home]
-    if create_folders(folders) != 0:
-        return -1
-    return 0
-
-
-def create_folders(folders):
-    for folder in folders:
-        try:
-            mkdir(folder)
-            return 0
-        except OSError as e:
-            if e.errno == 17:
-                pass
-                return 0
-            else:
-                print("Error #%d: %s" % (e.errno, e.strerror))
-                return e.errno
 
 
 def get_private_key_location(conf="%s.crypt/crypt.conf" % home):

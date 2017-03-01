@@ -7,7 +7,7 @@ import base64
 from time import time
 from shemutils.shred import Shredder
 from shemutils.logger import Logger
-from shemutils.encryption import Encryption
+from shemutils.encryption import Encryption, RSA
 from argparse import ArgumentParser, FileType
 from shemcrypt.configuration import secret_key_file, get_private_key_location
 from shemcrypt.time import format_time
@@ -54,9 +54,9 @@ def header():
 
 class KeyFile(object):
     def __init__(self, fd):
-        self.encrypted_data = fd.read().decode("base64")
+        self.encrypted_data = base64.b64decode(fd.read())
         self.key_location = get_private_key_location()
-        self.rsa = shemutils.RSA()
+        self.rsa = RSA()
         if not self.key_location:
             print("Type 'crypt-keygen' to generate a key file.")
             exit(1)
