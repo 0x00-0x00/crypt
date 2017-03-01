@@ -36,9 +36,9 @@ except ImportError:
     import_error("gevent")
     exit(-1)
 
-__VERSION__ = 1.93
+__VERSION__ = 1.94
 __author__ = "zc00l"
-__revision__ = "2017/02/27"
+__revision__ = "2017/03/01"
 shredlogger = Logger("Shred")
 
 

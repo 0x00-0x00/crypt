@@ -1,7 +1,21 @@
 from setuptools import setup, find_packages
+from sys import exit
+import os
+
+
+def compile_c_sources():
+    try:
+        os.system("make")
+        os.system("chmod 755 shemcrypt/keygenerator")
+    except:
+        print("[!] Error: Could not compile C sources.")
+        exit(1)
+    return 0
+
+compile_c_sources()
 
 setup(name='crypt-en',
-      version='1.9.3',
+      version='1.9.4',
       description="""
 Shemhazai`s cryptography utility for cryptography.\n
     This program has the following features:
@@ -15,5 +29,8 @@ Shemhazai`s cryptography utility for cryptography.\n
       packages=['shemcrypt'],
       package_dir={'shemcrypt': 'shemcrypt'},
       package_data={'shemcrypt': ['shemcrypt/*']},
+      data_files = [
+          ("shemcrypt",["shemcrypt/keygenerator"]),
+          ],
       scripts=['bin/crypt', 'bin/crypt-keygen'],
       zip_safe=False, install_requires=['gevent'])
