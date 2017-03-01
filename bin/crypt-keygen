@@ -76,7 +76,6 @@ def write_symmetric_key(r, secret_file=secret_key_file):
         exit(1)
 
     cipher = r.encrypt_message(key, v=False)
-    print("Writing {0} bytes of secret_key into {0}".format(len(cipher), secret_file))
     with open(secret_file, "wb") as f:
         f.write(base64.b64encode(cipher))
 
