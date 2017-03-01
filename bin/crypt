@@ -48,7 +48,7 @@ errwrite = stderr.write
 
 
 def header():
-    errwrite("[shemcrypt v. %.2f]\n" % __VERSION__)
+    errwrite("[crypt v. %.2f]\n" % __VERSION__)
     errwrite("revision: %s\n" % __revision__)
 
 
