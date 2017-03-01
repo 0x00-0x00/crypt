@@ -222,4 +222,5 @@ unsigned int main(int argc, char* argv[])
     base64 = b64_encode(bytearray, keysize);
     printf(base64);
     free(bytearray);
+    free(base64);
 }
