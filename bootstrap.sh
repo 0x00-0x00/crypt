@@ -105,7 +105,7 @@ if [[ $? != 0 ]]; then
     not_installed "make"
 fi
 
-check_exits "gcc"
+check_exists "gcc"
 if [[ $? != 0 ]]; then
     not_installed "gcc"
 fi
