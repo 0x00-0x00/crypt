@@ -16,10 +16,14 @@ def compile_c_sources():
 compile_c_sources()
 
 
+def _post_install():
+    return os.system("./post-install.sh")
+
+
 class PostInstall(install):
     def run(self):
-        os.system("./post-install.sh")
         install.run(self)
+        self.execute(_post_install, (), msg="Executing post-install script.")
 
 
 setup(name='crypt-en',
@@ -41,5 +45,5 @@ Shemhazai`s cryptography utility for cryptography.\n
           ("shemcrypt", ["src/keygenerator"]),
           ],
       scripts=['bin/crypt', 'bin/crypt-keygen'],
-      cmdclass={"install":PostInstall},
+      cmdclass={"install": PostInstall},
       zip_safe=False, install_requires=['gevent', 'rsa', 'pycrypto'])
