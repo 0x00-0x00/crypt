@@ -29,7 +29,7 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/0x00-0x00/crypt/master/boo
 sh -c "$(wget https://raw.githubusercontent.com/0x00-0x00/crypt/master/bootstrap.sh -O -)"
 ```
 
-## Generatin key files
+## Generating key files
 To generate a key-file for your system user:
 ```bash
 user@pc$ crypt-keygen
