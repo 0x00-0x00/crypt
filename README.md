@@ -29,6 +29,29 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/0x00-0x00/crypt/master/boo
 sh -c "$(wget https://raw.githubusercontent.com/0x00-0x00/crypt/master/bootstrap.sh -O -)"
 ```
 
+Or clone it and install using bootstrap.sh:
+
+```bash
+git clone https://github.com/0x00-0x00/crypt.git
+cd crypt/
+./bootstrap.sh
+```
+
+And it will be installed!
+
+
+Notes:
+
+
+If you python3.6 is 'python' in your PATH, you'll need to link it using:
+```bash
+# confirm your python version
+user@pc$ python -V
+Python 3.6.0
+...
+root@pc# ln -s $(which python) /usr/local/bin/python3.6 
+```
+
 ## Generating key files
 To generate a key-file for your system user:
 ```bash
