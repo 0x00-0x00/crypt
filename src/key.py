@@ -17,7 +17,7 @@ class InvalidKeySize(Exception):
 class Key(object):
     """
     Key object.
-    :param: bits -> Key size
+    :param: bytes -> Key size
 
     Methods:
         new() -> generate a key
@@ -53,7 +53,6 @@ class Key(object):
         if key is None or key is "":
             print("[!] Error: Could not generate a key.")
             exit(1)
-
         return key
 
     def _key_validation(self):
