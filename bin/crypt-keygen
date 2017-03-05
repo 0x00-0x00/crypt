@@ -43,6 +43,8 @@ keys = {
         "private": ".priv.key"
     }
 
+logger = Logger("crypt-keygen")
+
 
 def clean_all():
     try:
@@ -97,17 +99,19 @@ def keyfile_hash_verification():
     try:
         check1 = Checksum(secret_key_file, "sha256").get()
         check2 = open(secret_key_file + ".sha256", "rb").read()
-    except:
+    except Exception as e:
+        logger.error("Checksum check error: {0}".format(e))
         return -1
 
     if check1 == check2:
         return 0
 
+    logger.debug("Checksum 1: {0}".format(check1))
+    logger.debug("Checksum 2: {0}".format(check2))
     return 1
 
 
 def main():
-    logger = Logger("crypt-keygen")
     parser = argparse.ArgumentParser()
     parser.add_argument("--clean", action="store_true", required=False, help="Clean configuration file;")
     parser.add_argument("--check", action="store_true", required=False, help="Check key location and hashes;")
