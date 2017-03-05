@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-std=gnu99 -Wall
-PROG=shemcrypt/keygenerator
+PROG=src/keygenerator
 
-crypt: shemcrypt/keygenerator.c
-	$(CC) -o $(PROG) shemcrypt/keygenerator.c $(CFLAGS)
+crypt: src/keygenerator.c
+	$(CC) -o $(PROG) src/keygenerator.c $(CFLAGS)
 
