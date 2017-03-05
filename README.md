@@ -13,8 +13,10 @@ By using this method - as it does not blocks with stdin inputs - enables the use
 THE RSA PRIVATE KEY MUST BE STORED IN A SAFE, MOBILE DEVICE MEDIA TO ENSURE DATA SAFETY.
 
 ## Requirements
-1. Linux 
+1. Linux
 2. Python 3.6
+3. git
+4. make
 
 ## How to install
 It is simple to start using this tool!
