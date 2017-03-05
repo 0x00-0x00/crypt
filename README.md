@@ -29,6 +29,27 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/0x00-0x00/crypt/master/boo
 sh -c "$(wget https://raw.githubusercontent.com/0x00-0x00/crypt/master/bootstrap.sh -O -)"
 ```
 
+## Generatin key files
+To generate a key-file for your system user:
+```bash
+user@pc$ crypt-keygen
+-
+Crypt-KeyGen instruction to private key storage
+YOUR PRIVATE KEY IS YOUR MOST IMPORTANT FILE
+So its storage MUST occur in removable media.
+DO NOT STORE IT IN HARD DRIVES. EVEN IF ENCRYPTED.
+Give a valid location (folder) to store your private key: /home/test/keyfolder
+14:42:45 [crypt-keygen] INFO: [*] Key location: /home/test/keyfolder/
+14:42:45 [RSA] INFO: [*] Generating new 4096-bits key pair ...
+14:43:48 [RSA] INFO: [*] Key pair generation took 63.14277672767639 seconds.
+14:43:48 [RSA] INFO: [*] Private key saved to file '/home/test/keyfolder/.priv.key'
+
+user@pc$ crypt-keygen --check
+14:46:51 [crypt-keygen] INFO: [*] Key location: /home/test/keyfolder/
+14:46:51 [crypt-keygen] INFO: [*] Secret key file: /home/test/.crypt/secret_key
+14:46:51 [crypt-keygen] INFO: [*] Private key location: /home/test/keyfolder/
+14:46:51 [crypt-keygen] INFO: [*] Everything is ok.
+```
 
 ## Usage
 To encrypt or decrypt a file 'FILE.EXT' using a text password:
