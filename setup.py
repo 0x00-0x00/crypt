@@ -1,8 +1,10 @@
 from setuptools import setup, find_packages
+from setuptools.command.install import install
 from sys import exit
 import os
 
 
+#  Compile the C source code
 def compile_c_sources():
     try:
         os.system("make")
@@ -11,8 +13,14 @@ def compile_c_sources():
         print("[!] Error: Could not compile C sources.")
         exit(1)
     return 0
-
 compile_c_sources()
+
+
+class PostInstall(install):
+    def run(self):
+        os.system("./post-install.sh")
+        install.run(self)
+
 
 setup(name='crypt-en',
       version='1.9.5',
@@ -33,4 +41,5 @@ Shemhazai`s cryptography utility for cryptography.\n
           ("shemcrypt", ["src/keygenerator"]),
           ],
       scripts=['bin/crypt', 'bin/crypt-keygen'],
+      cmdclass={"install":PostInstall},
       zip_safe=False, install_requires=['gevent', 'rsa', 'pycrypto'])
