@@ -6,7 +6,7 @@ import os
 def compile_c_sources():
     try:
         os.system("make")
-        os.system("chmod 755 shemcrypt/keygenerator")
+        os.system("chmod 755 src/keygenerator")
     except:
         print("[!] Error: Could not compile C sources.")
         exit(1)
@@ -15,7 +15,7 @@ def compile_c_sources():
 compile_c_sources()
 
 setup(name='crypt-en',
-      version='1.9.4',
+      version='1.9.5',
       description="""
 Shemhazai`s cryptography utility for cryptography.\n
     This program has the following features:
@@ -27,10 +27,10 @@ Shemhazai`s cryptography utility for cryptography.\n
       author_email='andre.marques@fatecp.sp.gov.br',
       license='MIT',
       packages=['shemcrypt'],
-      package_dir={'shemcrypt': 'shemcrypt'},
-      package_data={'shemcrypt': ['shemcrypt/*']},
-      data_files = [
-          ("shemcrypt",["shemcrypt/keygenerator"]),
+      package_dir={'shemcrypt': 'src'},
+      package_data={'shemcrypt': ['src/*']},
+      data_files=[
+          ("shemcrypt", ["src/keygenerator"]),
           ],
       scripts=['bin/crypt', 'bin/crypt-keygen'],
-      zip_safe=False, install_requires=['gevent'])
+      zip_safe=False, install_requires=['gevent', 'rsa', 'pycrypto'])
