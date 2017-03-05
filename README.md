@@ -43,7 +43,7 @@ And it will be installed!
 Notes:
 
 
-If you python3.6 is 'python' in your PATH, you'll need to link it using:
+If your python3.6 is 'python' in your PATH, you'll need to link it using:
 ```bash
 # confirm your python version
 user@pc$ python -V
