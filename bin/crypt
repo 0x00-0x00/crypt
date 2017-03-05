@@ -42,7 +42,6 @@ __revision__ = "2017/03/05"
 logger = Logger("CRYPT")
 
 
-
 write = stdout.write
 flush = stdout.flush
 errwrite = stderr.write
@@ -162,7 +161,6 @@ class Crypter(object):
             '# Return information to the user that encryption function has started'
             if self.verbose:
                 logger.info("Encryption of file '{0}' started.\n".format(f.name))
-
 
         gevent.joinall(j)
         logger.info("Encryption procedure has been completed.\n")
