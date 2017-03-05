@@ -12,10 +12,8 @@ python_modules=(pycrypto rsa gevent)
 
 function header
 {
-    echo "##########################";
-    echo "| crypt bootstrap script |";
-    echo "##########################";
-    echo "";
+    echo "crypt bootstrap script";
+    echo "----------------------";
 }
 
 
@@ -102,10 +100,14 @@ header
 # Checkage before running script to ensure working state
 check_root ${uid}
 
-
-check_exists "cpan"
+check_exists "make"
 if [[ $? != 0 ]]; then
-    not_installed "cpan";
+    not_installed "make"
+fi
+
+check_exits "gcc"
+if [[ $? != 0 ]]; then
+    not_installed "gcc"
 fi
 
 check_exists "pip3.6"
@@ -124,11 +126,20 @@ if [[ $? != 0 ]]; then
 fi
 
 # Work
-install_cpan_modules
-if [[ $? != 0 ]]; then
-    echo "[!] Error: Perl modules could not be installed for some reason. Fix it.";
-    exit;
-fi
+
+#  Perl is not used in the project right now.
+#  So installing it is useless.
+
+#check_exists "cpan"
+#if [[ $? != 0 ]]; then
+#    not_installed "cpan";
+#fi
+
+#install_cpan_modules
+#if [[ $? != 0 ]]; then
+#    echo "[!] Error: Perl modules could not be installed for some reason. Fix it.";
+#    exit;
+#fi
 
 install_python_modules
 if [[ $? != 0 ]]; then
