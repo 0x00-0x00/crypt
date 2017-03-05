@@ -69,8 +69,8 @@ def write_symmetric_key(r, secret_file=secret_key_file):
     :param secret_file: os.path
     :return: Integer -> 0
     """
-    key_obj = Key(32)
-    key = key_obj.get()
+    key_obj = Key(32).new()  # generate the key
+    key = key_obj.get()  # return the key to a variable
 
     if key is None or key is "":
         print("[!] Error: Could not generate a key.")
