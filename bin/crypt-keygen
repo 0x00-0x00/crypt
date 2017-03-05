@@ -53,6 +53,7 @@ def clean_all():
             if os.path.exists(fd):
                 shred_file(fd)
     except Exception as e:
+        logger.error("Error: {0}".format(e))
         return e
     return 0
 
