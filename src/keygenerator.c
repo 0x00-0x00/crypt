@@ -199,7 +199,7 @@ unsigned int genrand(int seed)
 }
 
 
-unsigned int main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     unsigned int keysize;
     unsigned int r;
@@ -210,17 +210,18 @@ unsigned int main(int argc, char* argv[])
 
     keysize = atoi(argv[1]);
     unsigned int key[keysize];
-    char* bytearray = malloc(sizeof(char) * keysize);;
+    unsigned char* bytearray = malloc(sizeof(char) * keysize);;
     char* base64 = malloc(sizeof(char) * (keysize*2));
     for(unsigned int i = 0; i < keysize; i ++)
     {
         r = genrand(i);
         memcpy(&key[i], &r, sizeof(unsigned int));
-        sprintf(&bytearray[i], "%s", (char*)&key[i]);
+        sprintf((char*)&bytearray[i], "%s", (char*)&key[i]);
         memset(&key[i], 0x0, 0x1); // clean the memory *key;
     }
     base64 = b64_encode(bytearray, keysize);
     printf(base64);
     free(bytearray);
     free(base64);
+    return 0;
 }
