@@ -26,6 +26,9 @@ class PostInstall(install):
         self.execute(_post_install, (), msg="Executing post-install script.")
 
 
+#  Get the path of site-packages
+module_folder = os.path.dirname(os.__file__) + os.sep + "site-packages" + os.sep
+
 setup(name='crypt-en',
       version='1.9.5',
       description="""
@@ -42,7 +45,7 @@ Shemhazai`s cryptography utility for cryptography.\n
       package_dir={'shemcrypt': 'src'},
       package_data={'shemcrypt': ['src/*']},
       data_files=[
-          ("shemcrypt", ["src/keygenerator"]),
+          (module_folder + "shemcrypt", ["src/keygenerator"]),
           ],
       scripts=['bin/crypt', 'bin/crypt-keygen'],
       cmdclass={"install": PostInstall},
