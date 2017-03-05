@@ -26,7 +26,7 @@ function check_root
 }
 
 
-function check_exists2
+function check_exists
 {
     echo -n "[+] Checking $1: ";
     program_path=$(which $1);
