@@ -6,8 +6,8 @@
 
 
 # Static variables
-uid=$(id -u)
-python_modules=(pycrypto rsa gevent)
+uid=$(id -u);
+python_modules=("pycrypto" "rsa" "gevent");
 
 
 function header
