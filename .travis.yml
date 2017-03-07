@@ -16,6 +16,8 @@ install:
 script:
 - "crypt -h"
 
+- "echo '/home/travis/' | crypt-keygen"
+
 - "crypt --encrypt --file test.file -k"
 
 - "crypt --decrypt --file test.file.enc -k"
