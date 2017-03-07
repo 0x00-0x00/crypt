@@ -8,24 +8,21 @@ install:
 - "git clone https://github.com/0x00-0x00/shemutils.git"
 - "cd shemutils/; python setup.py install; cd ~/build/0x00-0x00/crypt"
 - "python setup.py install"
+- "pip -r requirements.txt"
 - "cd travis_test/"
 - "echo '[*] Ready to begin test phase.'"
 
 
 script:
-- "echo Test #1: Help section."
 - "crypt -h"
 
-- "echo Test #2: Encrypting a file"
 - "crypt --encrypt --file test.file -k"
 
-- "echo Test #3: Decrypting a file"
 - "crypt --decrypt --file test.file.enc -k"
 - "rm test.file.enc"
 
-- "echo Test #4: Encrypting a file with unique flag"
+
 - "crypt --encrypt --file test.file -k -u"
 
-- "echo Test #5: Decrypting a file with unique flag"
 - "crypt --decrypt --file test.file.enc -k -u"
 
