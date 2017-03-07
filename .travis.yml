@@ -28,3 +28,6 @@ script:
 
 - "crypt --decrypt --file test.file.enc -k -u"
 
+- "crypt --encrypt --file test.file -k -u --compress"
+
+- "crypt --decrypt --file test.file.enc -k -u --compress"
