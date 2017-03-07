@@ -5,10 +5,11 @@ import sys
 import os
 import base64
 from time import time
+from argparse import ArgumentParser, FileType
 from shemutils.shred import Shredder
 from shemutils.logger import Logger
 from shemutils.encryption import Encryption, RSA
-from argparse import ArgumentParser, FileType
+from shemcrypt.integrity import integrity_check
 from shemcrypt.configuration import secret_key_file, get_private_key_location
 from shemcrypt.time import format_time
 from sys import exit, stdout, stderr
@@ -164,6 +165,13 @@ class Crypter(object):
 
         gevent.joinall(j)
         logger.info("Encryption procedure has been completed.\n")
+
+        logger.info("Checking integrity of files ...")
+        for f in self.ffiles:
+            encrypted_name = f.name + ".enc"
+            if integrity_check(f.name, encrypted_name, self.key) != 0:
+                logger.error("File '{0}' has failed for integrity check.")
+        logger.info("Integrity check has been completed.\n")
 
         if self.unique.is_set():
             logger.info("Shredding files ...")  # why not gevent??????
