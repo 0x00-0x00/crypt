@@ -6,8 +6,11 @@ sudo: required
 
 install:
 - "ls ~"
+- "ls builds/"
+- "ls build/"
+- "ls /"
 - "git clone https://github.com/0x00-0x00/shemutils.git"
-- "cd shemutils/; python setup.py install; cd ../0x00-0x00/crypt"
+- "cd shemutils/; python setup.py install; cd ~/0x00-0x00/crypt"
 - "python setup.py install"
 - "cd travis_test/"
 - "echo '[*] Ready to begin test phase.'"
