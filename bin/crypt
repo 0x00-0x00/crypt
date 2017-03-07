@@ -4,6 +4,7 @@
 import sys
 import os
 import base64
+import shutil
 from time import time
 from argparse import ArgumentParser, FileType
 from shemutils.shred import Shredder
@@ -12,6 +13,7 @@ from shemutils.encryption import Encryption, RSA
 from shemcrypt.integrity import integrity_check
 from shemcrypt.configuration import secret_key_file, get_private_key_location
 from shemcrypt.time import format_time
+from shemcrypt.compression import compress_file, decompress_file
 from sys import exit, stdout, stderr
 
 
@@ -90,6 +92,9 @@ class Crypter(object):
 
         '# Integrity disable '
         self.no_integrity = args.no_check
+
+        '# Compression boolean '
+        self.compress = args.compress
 
         '# Unique option'
         self.unique = Event()
@@ -330,6 +335,8 @@ def main():
                                                                          "of password hashing.")
     core_group.add_argument("-nc", "--no-check", action="store_true",
                             help="Disables integrity check of encrypted files.")
+    core_group.add_argument("-c", "--compress", action="store_true",
+                            help="Compress/decompress the data before encryption.")
     file_group.add_argument("-f", "--file", help="File to be de/encrypted.", nargs='+', type=FileType('rb+'))
     mesg_group.add_argument("-m", "--msg", help="Message to be de/encrypted")
 
