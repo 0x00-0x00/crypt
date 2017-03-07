@@ -5,10 +5,11 @@ import sys
 import os
 import base64
 from time import time
+from argparse import ArgumentParser, FileType
 from shemutils.shred import Shredder
 from shemutils.logger import Logger
 from shemutils.encryption import Encryption, RSA
-from argparse import ArgumentParser, FileType
+from shemcrypt.integrity import integrity_check
 from shemcrypt.configuration import secret_key_file, get_private_key_location
 from shemcrypt.time import format_time
 from sys import exit, stdout, stderr
@@ -36,9 +37,9 @@ except ImportError:
     import_error("gevent")
     exit(-1)
 
-__VERSION__ = 1.95
+__VERSION__ = 1.96
 __author__ = "zc00l"
-__revision__ = "2017/03/05"
+__revision__ = "2017/03/06"
 logger = Logger("CRYPT")
 
 
@@ -86,6 +87,9 @@ class Crypter(object):
 
         '# Key size'
         self.key_bits = args.bits
+
+        '# Integrity disable '
+        self.no_integrity = args.no_check
 
         '# Unique option'
         self.unique = Event()
@@ -164,6 +168,16 @@ class Crypter(object):
 
         gevent.joinall(j)
         logger.info("Encryption procedure has been completed.\n")
+
+        if self.no_integrity is not True:
+            logger.info("Checking integrity of files ...")
+            for f in self.ffiles:
+                encrypted_name = f.name + ".enc"
+                if integrity_check(f.name, encrypted_name, self.key) != 0:
+                    logger.error("File '{0}' has failed for integrity check.")
+            logger.info("Integrity check has been completed.\n")
+        else:
+            logger.info("Skipping integrity check.")
 
         if self.unique.is_set():
             logger.info("Shredding files ...")  # why not gevent??????
@@ -314,6 +328,8 @@ def main():
                                                    " when encrypting", action="store_true")
     core_group.add_argument("-k", "--keyfile", action="store_true", help="Secret Key File to use instead "
                                                                          "of password hashing.")
+    core_group.add_argument("-nc", "--no-check", action="store_true",
+                            help="Disables integrity check of encrypted files.")
     file_group.add_argument("-f", "--file", help="File to be de/encrypted.", nargs='+', type=FileType('rb+'))
     mesg_group.add_argument("-m", "--msg", help="Message to be de/encrypted")
 
