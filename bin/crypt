@@ -217,7 +217,7 @@ class Crypter(object):
         k2 = time()
         logger.info("Total time elapsed: {0}".format(format_time(k2-k1)))
         if t > 1:
-            logger.info("Time mean: %.2f" % ((k2-k1)/float(t)))
+            logger.info("Time mean: %.2f" % (format_time((k2-k1)/float(t))))
         return 0, 0
 
     def _do_decrypt_files(self):
@@ -274,9 +274,9 @@ class Crypter(object):
                     logger.warning("File not deleted: '{0}'\n".format(os.path.abspath(f.name)))
 
         k2 = time()
-        logger.info("Total time elapsed: {0}".format(k2-k1))
+        logger.info("Total time elapsed: {0}".format(format_time(k2-k1)))
         if t > 1:
-            logger.info("Time mean: %.2f" % ((k2-k1)/float(t)))
+            logger.info("Time mean: %.2f" % (format_time((k2-k1)/float(t))))
         return 0, 0
 
     def _count_files(self):
@@ -392,7 +392,7 @@ def main():
     t2 = time()
 
     if args.verbose:
-        print("Process duration: %.2f seconds" % float(float(t2) - float(t1)))
+        print("Process duration: %.2f seconds" % format_time(float(float(t2) - float(t1))))
 
     return
 
