@@ -39,9 +39,9 @@ except ImportError:
     import_error("gevent")
     exit(-1)
 
-__VERSION__ = 1.96
+__VERSION__ = '1.9.7'
 __author__ = "zc00l"
-__revision__ = "2017/03/06"
+__revision__ = '2017/03/07'
 logger = Logger("CRYPT")
 
 
@@ -51,7 +51,7 @@ errwrite = stderr.write
 
 
 def header():
-    errwrite("[crypt v. %.2f]\n" % __VERSION__)
+    errwrite("[crypt v. %s\n" % __VERSION__)
     errwrite("revision: %s\n" % __revision__)
 
 
