@@ -74,7 +74,7 @@ def compress_file(file):
     logger.info("Original file size: {0}".format(original_size))
     logger.info("Compressed file size: {0}".format(compressed_size))
 
-    pctg = (compressed_size/original_size) * 100.0
+    pctg = (original_size/compressed_size) * 100.0
     if pctg < 100:
         logger.info("File '%s' got %.2f%% smaller due compression." % (file, pctg))
     else:
