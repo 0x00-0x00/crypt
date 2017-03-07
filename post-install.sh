@@ -4,7 +4,7 @@
 #  Removes all files specified at junk array.
 # ------------------------------------------------
 
-junk=("src/keygenerator")
+junk=("src/keygenerator" "src/shredder" "src/count_bytes")
 
 for junk_file in "${junk[@]}";
 do

@@ -9,6 +9,8 @@ def compile_c_sources():
     try:
         os.system("make")
         os.system("chmod 755 src/keygenerator")
+        os.system("chmod 755 src/shredder")
+        os.system("chmod 755 src/count_bytes")
     except:
         print("[!] Error: Could not compile C sources.")
         exit(1)
@@ -45,7 +47,10 @@ Shemhazai`s cryptography utility for cryptography.\n
       package_dir={'shemcrypt': 'src'},
       package_data={'shemcrypt': ['src/*']},
       data_files=[
-          (module_folder + "shemcrypt", ["src/keygenerator"]),
+          (module_folder + "shemcrypt", ["src/keygenerator",
+                                         "src/shredder",
+                                         "src/count_bytes"
+                                         ]),
           ],
       scripts=['bin/crypt', 'bin/crypt-keygen'],
       cmdclass={"install": PostInstall},
