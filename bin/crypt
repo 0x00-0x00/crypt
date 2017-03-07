@@ -156,7 +156,6 @@ class Crypter(object):
         t = len(self.ffiles)  # num of files
         j = []
         k1 = time()
-        s = Shredder()
 
         for f in self.ffiles:
             '# Create initialization vector'
@@ -225,7 +224,6 @@ class Crypter(object):
         j = []
         t = len(self.ffiles)
         k1 = time()
-        shredder = Shredder()
 
         for f in self.ffiles:
 
