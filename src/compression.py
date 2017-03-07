@@ -30,6 +30,11 @@ def decompress_file(file):
         return -1
 
     pctg = (decompressed_size / original_size) * 100.0
+
+    #  Log the file size information
+    logger.info("Original file size: {0}".format(original_size))
+    logger.info("Decompressed file size: {0}".format(decompressed_size))
+
     if pctg > 100:
         logger.info("File '%s' got %.2f%% bigger due decompression." % (file, pctg))
     else:
@@ -64,6 +69,10 @@ def compress_file(file):
 
     # Count the size
     compressed_size = os.path.getsize(temporary_file)
+
+    #  Log the file size information
+    logger.info("Original file size: {0}".format(original_size))
+    logger.info("Compressed file size: {0}".format(compressed_size))
 
     pctg = (compressed_size/original_size) * 100.0
     if pctg < 100:
