@@ -1,4 +1,5 @@
 [![Stories in Ready](https://badge.waffle.io/0x00-0x00/crypt.png?label=ready&title=Ready)](https://waffle.io/0x00-0x00/crypt)
+[![TravisCI](https://travis-ci.org/0x00-0x00/crypt.svg?branch=master)](https://travis-ci.org/0x00-0x00/crypt/builds)
 # crypt - version 1.95
 ## Description
 Python program to encrypt files using AES-256/128bit combined with RSA-4096 cryptography and shred unencrypted files securely at the end of the process.
