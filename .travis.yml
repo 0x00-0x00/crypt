@@ -2,12 +2,8 @@ language: python
 python:
 - "3.6"
 
-sudo: required
-
-before_install:
-- "sudo ./bootstrap.sh"
-
 install:
+- "pip install -r requirements.txt"
 - "python setup.py install"
 
 script:
