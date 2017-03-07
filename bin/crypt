@@ -88,6 +88,9 @@ class Crypter(object):
         '# Key size'
         self.key_bits = args.bits
 
+        '# Integrity disable '
+        self.no_integrity = args.no_check
+
         '# Unique option'
         self.unique = Event()
         if args.unique is True:
@@ -166,12 +169,15 @@ class Crypter(object):
         gevent.joinall(j)
         logger.info("Encryption procedure has been completed.\n")
 
-        logger.info("Checking integrity of files ...")
-        for f in self.ffiles:
-            encrypted_name = f.name + ".enc"
-            if integrity_check(f.name, encrypted_name, self.key) != 0:
-                logger.error("File '{0}' has failed for integrity check.")
-        logger.info("Integrity check has been completed.\n")
+        if self.no_integrity is not True:
+            logger.info("Checking integrity of files ...")
+            for f in self.ffiles:
+                encrypted_name = f.name + ".enc"
+                if integrity_check(f.name, encrypted_name, self.key) != 0:
+                    logger.error("File '{0}' has failed for integrity check.")
+            logger.info("Integrity check has been completed.\n")
+        else:
+            logger.info("Skipping integrity check.")
 
         if self.unique.is_set():
             logger.info("Shredding files ...")  # why not gevent??????
@@ -322,6 +328,8 @@ def main():
                                                    " when encrypting", action="store_true")
     core_group.add_argument("-k", "--keyfile", action="store_true", help="Secret Key File to use instead "
                                                                          "of password hashing.")
+    core_group.add_argument("-nc", "--no-check", action="store_true",
+                            help="Disables integrity check of encrypted files.")
     file_group.add_argument("-f", "--file", help="File to be de/encrypted.", nargs='+', type=FileType('rb+'))
     mesg_group.add_argument("-m", "--msg", help="Message to be de/encrypted")
 
