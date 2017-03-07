@@ -4,6 +4,7 @@
 import sys
 import os
 import base64
+import shutil
 from time import time
 from argparse import ArgumentParser, FileType
 from shemutils.shred import Shredder
@@ -12,6 +13,7 @@ from shemutils.encryption import Encryption, RSA
 from shemcrypt.integrity import integrity_check
 from shemcrypt.configuration import secret_key_file, get_private_key_location
 from shemcrypt.time import format_time
+from shemcrypt.compression import compress_file, decompress_file
 from sys import exit, stdout, stderr
 
 
@@ -37,9 +39,9 @@ except ImportError:
     import_error("gevent")
     exit(-1)
 
-__VERSION__ = 1.96
+__VERSION__ = '1.9.7'
 __author__ = "zc00l"
-__revision__ = "2017/03/06"
+__revision__ = '2017/03/07'
 logger = Logger("CRYPT")
 
 
@@ -49,7 +51,7 @@ errwrite = stderr.write
 
 
 def header():
-    errwrite("[crypt v. %.2f]\n" % __VERSION__)
+    errwrite("[crypt v. %s\n" % __VERSION__)
     errwrite("revision: %s\n" % __revision__)
 
 
@@ -90,6 +92,9 @@ class Crypter(object):
 
         '# Integrity disable '
         self.no_integrity = args.no_check
+
+        '# Compression boolean '
+        self.compress = args.compress
 
         '# Unique option'
         self.unique = Event()
@@ -151,22 +156,46 @@ class Crypter(object):
         t = len(self.ffiles)  # num of files
         j = []
         k1 = time()
+        s = Shredder()
 
         for f in self.ffiles:
             '# Create initialization vector'
             iv = Encryption.create_iv()
 
-            '# Start an encryption greenlet '
-            g = gevent.spawn(Encryption.encrypt_file, f.name, self.key, iv)
+            if self.compress is True:
+                #  Compress the file and return its path
+                compressed_file = compress_file(f.name)
 
-            '# Add it to job queue '
-            j.append(g)
+                #  Encrypt the data
+                g = gevent.spawn(Encryption.encrypt_file, compressed_file, self.key, iv)
+                g.join()
+
+                #  Generate the encrypted (and compressed) data file name
+                encrypted_file = compressed_file + '.enc'
+
+                #  Move the encrypted data to the working directory.
+                try:
+                    shutil.move(encrypted_file, os.getcwd())
+                except shutil.Error:
+                    s.shred(os.getcwd() + os.sep + os.path.basename(encrypted_file), remove=True)
+                    shutil.move(encrypted_file, os.getcwd())
+
+                #  Shred the compressed data.
+                if s.shred(compressed_file, remove=True) == 0:
+                    if not os.path.exists(compressed_file):
+                        logger.step_ok("File shredded: '{0}\n".format(os.path.abspath(compressed_file)))
+            else:
+                '# Start an encryption greenlet '
+                g = gevent.spawn(Encryption.encrypt_file, f.name, self.key, iv)
+                '# Add it to job queue '
+                j.append(g)
 
             '# Return information to the user that encryption function has started'
             if self.verbose:
                 logger.info("Encryption of file '{0}' started.\n".format(f.name))
 
-        gevent.joinall(j)
+        if len(j) > 0:
+            gevent.joinall(j)
         logger.info("Encryption procedure has been completed.\n")
 
         if self.no_integrity is not True:
@@ -182,7 +211,6 @@ class Crypter(object):
         if self.unique.is_set():
             logger.info("Shredding files ...")  # why not gevent??????
             for f in self.ffiles:
-                s = Shredder()
                 if s.shred(f.name, remove=True) == 0:
                     if not os.path.exists(f.name):
                         logger.step_ok("File shredded: '{0}\n".format(os.path.abspath(f.name)))
@@ -197,25 +225,47 @@ class Crypter(object):
         j = []
         t = len(self.ffiles)
         k1 = time()
+        shredder = Shredder()
 
         for f in self.ffiles:
-            '# Spawn new decryption thread'
-            g = gevent.spawn(Encryption.decrypt_file, f.name, self.key)
 
-            '# Append greenlet to group'
-            j.append(g)
+            if self.compress is True:
+                #  Decrypt the data
+                g = gevent.spawn(Encryption.decrypt_file, f.name, self.key)
+                g.join()
+
+                #  Unencrypted file name
+                unencrypted_name, ext = os.path.splitext(f.name)
+
+                #  Decompress the file and return its path
+                decompressed_file = decompress_file(unencrypted_name)
+
+                #  Move the decrypted data (and decompressed) to the working directory.
+                try:
+                    shutil.move(decompressed_file, os.getcwd())
+                except shutil.Error:
+                    shredder.shred(os.getcwd() + os.sep + os.path.basename(decompressed_file), remove=True)
+                    shutil.move(decompressed_file, os.getcwd())
+
+            else:
+                '# Spawn new decryption thread'
+                g = gevent.spawn(Encryption.decrypt_file, f.name, self.key)
+
+                '# Append greenlet to group'
+                j.append(g)
 
             '# Returns information to the user '
             if self.verbose:
                 logger.info("Decryption of file '{0}' started.".format(f.name))
 
-        '# Wait for greenlet to finish.'
-        gevent.joinall(j)
+        if len(j) > 0:
+            '# Wait for greenlet to finish.'
+            gevent.joinall(j)
+
         logger.info("Decryption procedure has been completed.\n")
 
         if self.unique.is_set():
             logger.info("Deleting files ...")
-            shredder = Shredder()
             for f in self.ffiles:
                 shredder.shred(f.name, remove=True)
                 if not os.path.exists(f.name):
@@ -330,6 +380,8 @@ def main():
                                                                          "of password hashing.")
     core_group.add_argument("-nc", "--no-check", action="store_true",
                             help="Disables integrity check of encrypted files.")
+    core_group.add_argument("-c", "--compress", action="store_true",
+                            help="Compress/decompress the data before encryption.")
     file_group.add_argument("-f", "--file", help="File to be de/encrypted.", nargs='+', type=FileType('rb+'))
     mesg_group.add_argument("-m", "--msg", help="Message to be de/encrypted")
 
