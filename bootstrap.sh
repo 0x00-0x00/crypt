@@ -42,6 +42,17 @@ function check_exists
 
 function install_python_modules
 {
+
+    pip3.6 -h > /dev/null 2>&1
+    if [[ $? != 0 ]]; then
+        version=$(pip -V | grep 3.6 | wc -l);
+        if [[ ${version} == 0 ]]; then
+            echo -e "\033[091mERROR:\033[0m Python 3.6 is not installed.";
+            exit;
+        fi
+        ln -s $(which pip) /usr/local/bin/pip3.6
+    fi
+
     for module in "${python_modules[@]}"
     do
         echo -n "[+] Installing python module ${module}: ";
@@ -77,6 +88,17 @@ function install_cpan_modules
 
 function install_repo
 {
+
+    python3.6 -V > /dev/null 2>&1
+    if [[ $? != 0 ]]; then
+        version=$(python -V | grep 3.6 | wc -l);
+        if [[ ${version} == 0 ]]; then
+            echo -e "\033[091mERROR:\033[0m Python 3.6 is not installed.";
+            exit;
+        fi
+        ln -s $(which python) /usr/local/bin/python3.6
+    fi
+
     echo "[+] Changing current working directory to '/tmp' ...";
     cd /tmp;
     echo "[+] Cloning $1 ...";
@@ -110,20 +132,20 @@ if [[ $? != 0 ]]; then
     not_installed "gcc"
 fi
 
-check_exists "pip3.6"
-if [[ $? != 0 ]]; then
-    not_installed "pip3.6";
-fi
+#check_exists "pip3.6"
+#if [[ $? != 0 ]]; then
+#    not_installed "pip3.6";
+#fi
 
 check_exists "git"
 if [[ $? != 0 ]]; then
     not_installed "git";
 fi
 
-check_exists "python3.6"
-if [[ $? != 0 ]]; then
-    not_installed "python3.6";
-fi
+#check_exists "python3.6"
+#if [[ $? != 0 ]]; then
+#    not_installed "python3.6";
+#fi
 
 # Work
 
