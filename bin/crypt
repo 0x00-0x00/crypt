@@ -400,6 +400,6 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        m = shemutils.Logger("MAIN")
+        m = Logger("MAIN")
         m.critical("Interrupt signal detected.")
         exit(0)
