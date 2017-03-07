@@ -1,38 +1,43 @@
-from shemutils.logger import Logger
+import shemcrypt
 import os
+import time
+import subprocess
+
+from shemutils.logger import Logger
+from shemutils.shred import Shredder
+from sys import exit
+
 
 shredlogger = Logger("Shred")
 
 
-def shred_file(f, n=2):
-    """
-    Shred a file in a really tight secure manner
-    :param f: string containing file name
-    :param n: int containing number of passes
-    :return: 0 if successful
-    """
-    '# Get file size in bytes'
-    file_size = os.path.getsize(f)
-    if file_size < 0:
-        return None
+def shred_file(f):
+    if os.name == "posix":
+        shredder = os.path.dirname(shemcrypt.__file__) + os.sep + "shredder"
+        if not os.path.exists(shredder):
+            logger.error("Could not find shredder program. Maybe you need to reinstall crypt.")
+            exit(1)
 
-    patterns = [os.urandom(1) for _ in range(n)]
+        proc = subprocess.Popen([shredder, str(os.path.abspath(f)), str(os.path.getsize(f))],
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE)
+        while proc.poll() is None:
+            time.sleep(1)
 
-    x = 1  # count passes
+        if proc.poll() != 0:
+            return -1
 
-    '# Open file handle'
-    with open(f, "wb+") as fd:
-        for p in patterns:
+        try:
+            os.remove(f)
+        except Exception as e:
+            logger.error(e)
+            return -1
 
-            '# Overwrite data with random pattern byte '
-            for _ in range(file_size):
-                fd.write(p)
-            shredlogger.info("Shred pass #{0} using byte '{1}' done for file '{2}'".format(x, p, f))
-            x += 1
+    elif os.name == "nt":
+        shredder = Shredder()
+        if shredder.shred(f, remove=True) != 0:
+            return -1
 
-        for _ in range(file_size):
-            fd.write(b'\x00')
-        shredlogger.info("Shred pass #{0} using byte '{1}' done for file '{2}'".format(x, '\00', f))
-
-    os.remove(f)  # deletes file from OS
+    else:
+        return -1
     return 0
