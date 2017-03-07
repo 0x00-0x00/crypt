@@ -37,9 +37,9 @@ except ImportError:
     import_error("gevent")
     exit(-1)
 
-__VERSION__ = 1.95
+__VERSION__ = 1.96
 __author__ = "zc00l"
-__revision__ = "2017/03/05"
+__revision__ = "2017/03/06"
 logger = Logger("CRYPT")
 
 
