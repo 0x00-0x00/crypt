@@ -274,7 +274,7 @@ class Crypter(object):
         k2 = time()
         logger.info("Total time elapsed: {0}".format(format_time(k2-k1)))
         if t > 1:
-            logger.info("Time mean: %.2f" % (format_time((k2-k1)/float(t))))
+            logger.info("Time mean: %s" % (format_time((k2-k1)/float(t))))
         return 0, 0
 
     def _count_files(self):
