@@ -182,7 +182,12 @@ class Crypter(object):
                 #  Shred the compressed data.
                 if shred_file(compressed_file) == 0:
                     if not os.path.exists(compressed_file):
-                        logger.step_ok("File shredded: '{0}\n".format(os.path.abspath(compressed_file)))
+                        logger.info("File deleted: \
+                                '{0}'\n".format(os.path.abspath(compressed_file)))
+                    else:
+                        logger.warning("File deleted: \
+                                '{0}'\n".format(os.path.abspath(compressed_file)))
+
             else:
                 '# Start an encryption greenlet '
                 g = gevent.spawn(Encryption.encrypt_file, f.name, self.key, iv)
