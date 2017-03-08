@@ -19,7 +19,7 @@ def count_size(n):
     proc = subprocess.Popen([count_bytes, str(n)], stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)
     stdout, stderr = proc.communicate()
-    return 0
+    return stdout
 
 
 def decompress_file(file):
