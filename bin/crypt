@@ -189,7 +189,8 @@ class Crypter(object):
                 '# Add it to job queue '
                 j.append(g)
 
-            '# Return information to the user that encryption function has started'
+            '# Return information to the user that encryption \
+                    function has started'
             if self.verbose:
                 logger.info("Encryption of file '{0}' started.\n".format(f.name))
 
@@ -212,11 +213,15 @@ class Crypter(object):
             for f in self.ffiles:
                 if shred_file(f.name) == 0:
                     if not os.path.exists(f.name):
-                        logger.step_ok("File deleted: '{0}\n".format(os.path.abspath(f.name)))
+                        logger.info("File deleted: \
+                                '{0}'\n".format(os.path.abspath(f.name)))
+                    else:
+                        logger.warning("File not deleted: \
+                                '{0}'".format(os.path.abspath(f.name)))
         k2 = time()
         logger.info("Total time elapsed: {0}".format(format_time(k2-k1)))
         if t > 1:
-            logger.info("Time mean: %.2f" % (format_time((k2-k1)/float(t))))
+            logger.info("Time mean: %s" % (format_time((k2-k1)/float(t))))
         return 0, 0
 
     def _do_decrypt_files(self):
@@ -238,7 +243,8 @@ class Crypter(object):
                 #  Decompress the file and return its path
                 decompressed_file = decompress_file(unencrypted_name)
 
-                #  Move the decrypted data (and decompressed) to the working directory.
+                #  Move the decrypted data (and decompressed) to \
+                        #  the working directory.
                 try:
                     shutil.move(decompressed_file, os.getcwd())
                 except shutil.Error:
