@@ -2,6 +2,7 @@ import gzip
 import shutil
 import os
 import subprocess
+import shemcrypt
 from shemutils.logger import Logger
 from shemcrypt.integrity import get_temp_folder
 from sys import exit
