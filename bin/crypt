@@ -182,11 +182,9 @@ class Crypter(object):
                 #  Shred the compressed data.
                 if shred_file(compressed_file) == 0:
                     if not os.path.exists(compressed_file):
-                        logger.info("File deleted: \
-                                '{0}'\n".format(os.path.abspath(compressed_file)))
+                        logger.info("File deleted: '{0}'\n".format(os.path.abspath(compressed_file)))
                     else:
-                        logger.warning("File deleted: \
-                                '{0}'\n".format(os.path.abspath(compressed_file)))
+                        logger.warning("File deleted: '{0}'\n".format(os.path.abspath(compressed_file)))
 
             else:
                 '# Start an encryption greenlet '
@@ -218,11 +216,9 @@ class Crypter(object):
             for f in self.ffiles:
                 if shred_file(f.name) == 0:
                     if not os.path.exists(f.name):
-                        logger.info("File deleted: \
-                                '{0}'\n".format(os.path.abspath(f.name)))
+                        logger.info("File deleted: '{0}'\n".format(os.path.abspath(f.name)))
                     else:
-                        logger.warning("File not deleted: \
-                                '{0}'".format(os.path.abspath(f.name)))
+                        logger.warning("File not deleted: '{0}'\n".format(os.path.abspath(f.name)))
         k2 = time()
         logger.info("Total time elapsed: {0}".format(format_time(k2-k1)))
         if t > 1:
@@ -278,7 +274,7 @@ class Crypter(object):
             for f in self.ffiles:
                 shred_file(f.name)
                 if not os.path.exists(f.name):
-                    logger.info("File deleted: '{0}'".format(os.path.abspath(f.name)))
+                    logger.info("File deleted: '{0}'\n".format(os.path.abspath(f.name)))
                 else:
                     logger.warning("File not deleted: '{0}'\n".format(os.path.abspath(f.name)))
 
