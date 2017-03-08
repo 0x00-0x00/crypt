@@ -1,10 +1,24 @@
 import gzip
 import shutil
 import os
+import subprocess
 from shemutils.logger import Logger
 from shemcrypt.integrity import get_temp_folder
+from sys import exit
 
 logger = Logger("COMPRESSION")
+
+
+def count_size(n):
+    count_bytes = os.path.dirname(shemcrypt.__file__) + os.sep + "count_bytes"
+    if not os.path.exists(count_bytes):
+        logger.critical("Could not find the count_bytes binary. Maybe \
+                a reinstall is needed.")
+        exit(1)
+    proc = subprocess.Popen([count_bytes, str(n)], stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
+    stdout, stderr = proc.communicate()
+    return 0
 
 
 def decompress_file(file):
@@ -32,8 +46,9 @@ def decompress_file(file):
     pctg = (decompressed_size / original_size) * 100.0
 
     #  Log the file size information
-    logger.info("Original file size: {0}".format(original_size))
-    logger.info("Decompressed file size: {0}".format(decompressed_size))
+    logger.info("Original file size: {0}".format(count_size(original_size)))
+    logger.info("Decompressed file size: {0}".format(
+        count_size(decompressed_size)))
 
     if pctg > 100:
         logger.info("File '%s' got %.2f%% bigger due decompression." % (file, pctg))
@@ -71,8 +86,9 @@ def compress_file(file):
     compressed_size = os.path.getsize(temporary_file)
 
     #  Log the file size information
-    logger.info("Original file size: {0}".format(original_size))
-    logger.info("Compressed file size: {0}".format(compressed_size))
+    logger.info("Original file size: {0}".format(count_size(original_size)))
+    logger.info("Compressed file size: {0}".format(
+        count_size(compressed_size)))
 
     pctg = (original_size/compressed_size) * 100.0
     if pctg < 100:
