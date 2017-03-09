@@ -90,6 +90,32 @@ def write_symmetric_key(r, secret_file=secret_key_file):
     return 0
 
 
+def generate_keys(path, priv=keys["private"], pub=keys["public"]):
+    """
+    Write the keys into a non-generic path.
+    Used to storage of keys, not intentional for generic-use.
+    """
+    if not os.path.exists(path):
+        logger.critical("This folder does not exists.")
+        return -1
+
+    priv_f = os.path.join(path, priv)
+    pub_f = os.path.join(path, pub)
+    secret_file = os.path.join(path, "secret_key")
+
+    if os.path.exists(priv_f) or os.path.exists(pub_f):
+        logger.critical("Key file exists already.")
+        return -1
+
+    rsa = RSA()
+    rsa.generate_keypair()
+    rsa.save_keys(priv_f=priv_f, pub_f=pub_f)
+    if write_symmetric_key(rsa, secret_file=secret_file):
+        logger.critical("Could not write the symmetric key.")
+        return -1
+    return 0
+
+
 def keyfile_hash_verification():
     """
     check1 -> Extracts the current sha256 from secret_key file
@@ -115,16 +141,23 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--clean", action="store_true", required=False, help="Clean configuration file;")
     parser.add_argument("--check", action="store_true", required=False, help="Check key location and hashes;")
+    parser.add_argument("--to-path", type=str, required=False, help="Overrides the location where the key is going to "
+                                                                    "be stored.")
     args = parser.parse_args()
 
+    if args.to_path is not None:
+        if not generate_keys(args.to_path):
+            logger.info("Keys successfully generated and stored at {0}".format(args.to_path))
+            return 0
+
     if args.clean is True:
-        if clean_all() != 0:
+        if clean_all():
             logger.error("Error cleaning configuration files and secret key.")
             return -1
         return 0
 
     #  Set-up folder structure
-    if setup_full() != 0:
+    if setup_full():
         logger.error("Folder structure error")
         return -1
 
