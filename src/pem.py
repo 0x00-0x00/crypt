@@ -1,2 +1,2 @@
 pem_header = "-----BEGIN AES KEY-----\n"
-pem_footer = "-----END AES KEY-----"
+pem_footer = "\n-----END AES KEY-----"
