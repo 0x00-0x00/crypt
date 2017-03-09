@@ -57,7 +57,9 @@ def header():
 
 class KeyFile(object):
     def __init__(self, fd):
-        self.encrypted_data = base64.b64decode(fd.read())
+        self.data = str(fd.read().decode().replace("-----BEGIN AES KEY-----\n", "")).replace(
+            "-----END AES KEY-----", "")
+        self.encrypted_data = base64.b64decode(self.data)
         self.key_location = get_private_key_location()
         self.rsa = RSA()
         if not self.key_location:
