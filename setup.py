@@ -32,7 +32,7 @@ class PostInstall(install):
 module_folder = os.path.dirname(os.__file__) + os.sep + "site-packages" + os.sep
 
 setup(name='crypt-en',
-      version='1.9.8',
+      version='1.9.9',
       description="""
 Shemhazai`s cryptography utility for cryptography.\n
     This program has the following features:
