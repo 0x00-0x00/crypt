@@ -1,4 +1,5 @@
 from shemcrypt.configuration import secret_key_file, get_private_key_location
+from shemcrypt.pem import pem_header, pem_footer
 from shemutils.encryption import Encryption, RSA
 from gevent.event import Event
 from sys import exit

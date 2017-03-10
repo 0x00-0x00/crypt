@@ -2,6 +2,7 @@ import sys
 import os
 import base64
 import shutil
+import gevent
 from time import time
 from argparse import ArgumentParser, FileType
 from shemutils.logger import Logger
@@ -15,6 +16,9 @@ from shemcrypt.pem import pem_header, pem_footer
 from shemcrypt.key import KeyFile
 from gevent.event import Event
 from sys import exit, stdout, stderr
+
+
+logger = Logger("CRYPT")
 
 
 class Crypter(object):
