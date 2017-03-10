@@ -16,6 +16,14 @@ function change_version
         echo -e "\033[091mFAIL\033[0m";
     fi
 
+    echo -e -n "[*] Updating \033[092mREADME.md\033[0m version ... ";
+    sed -i "s/${1}/${2}/g" README.md;
+    if [[ $? == 0 ]]; then
+        echo -e "\033[092mOK\033[0m";
+    else
+        echo -e "\033[091mFAIL\033[0m";
+    fi
+
     cd bin/
     echo -e -n "[*] Updating main \033[092mcrypt binary\033[0m version ... "
     sed -i "s/__VERSION__ = '${1}'/__VERSION__ = '${2}'/" crypt
