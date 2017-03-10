@@ -3,7 +3,7 @@ import re
 
 
 home = environ["HOME"] + sep
-crypt_folder = home  + ".crypt"
+crypt_folder = home + ".crypt"
 config_file = "%s.crypt/crypt.conf" % home
 secret_key_file = "%s.crypt/secret_key" % home
 
