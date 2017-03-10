@@ -5,7 +5,7 @@ from shemcrypt.crypter import Crypter
 from shemcrypt.module_check import *
 from shemutils.logger import Logger
 from time import time
-from sys import stdout
+from sys import stdout, stderr
 
 
 __VERSION__ = '1.9.8'
