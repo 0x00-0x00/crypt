@@ -13,6 +13,7 @@ from shemcrypt.compression import compress_file, decompress_file
 from shemcrypt.shred import shred_file
 from shemcrypt.pem import pem_header, pem_footer
 from shemcrypt.key import KeyFile
+from gevent.event import Event
 from sys import exit, stdout, stderr
 
 
