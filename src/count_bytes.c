@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
     if(argc < 2) {
         return -1;
     }
-    off_t size;
+    long long size;
     size = atoll(argv[1]);
     str = count_bytes(size);
     fprintf(stdout, str);
