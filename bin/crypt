@@ -15,12 +15,12 @@ logger = Logger("CRYPT")
 
 write = stdout.write
 flush = stdout.flush
-errwrite = stderr.write
+errorwrite = stderr.write
 
 
 def header():
-    errwrite("[crypt v. %s\n" % __VERSION__)
-    errwrite("revision: %s\n" % __revision__)
+    errorwrite("[crypt v. %s\n" % __VERSION__)
+    errorwrite("revision: %s\n" % __revision__)
 
 
 def main():
