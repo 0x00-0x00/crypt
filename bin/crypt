@@ -3,6 +3,7 @@
 from argparse import ArgumentParser
 from shemcrypt.crypter import Crypter
 from shemcrypt.module_check import *
+from shemutils.logger import Logger
 from time import time
 from sys import stdout
 
