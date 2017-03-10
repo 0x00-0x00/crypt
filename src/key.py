@@ -1,3 +1,5 @@
+from shemcrypt.configuration import secret_key_file, get_private_key_location
+from shemutils.encryption import Encryption, RSA
 from gevent.event import Event
 from sys import exit
 import os
@@ -59,3 +61,24 @@ class Key(object):
         if self.key_size % 2 != 0:
             raise InvalidKeySize
         return True
+
+
+class KeyFile(object):
+    def __init__(self, fd):
+        self.data = str(fd.read().decode().replace(pem_header, "")).replace(
+            pem_footer, "")
+        self.encrypted_data = base64.b64decode(self.data)
+        self.key_location = get_private_key_location()
+        self.rsa = RSA()
+        if not self.key_location:
+            print("Type 'crypt-keygen' to generate a key file.")
+            exit(1)
+        self.priv_f, self.pub_f = self.key_location + ".priv.key", self.key_location + ".pub.key"
+        self.rsa.load_keys(priv_f=self.priv_f, pub_f=self.pub_f)
+
+    def _decrypt_key(self):
+        return self.rsa.decrypt_message(self.encrypted_data)
+
+    def get(self):
+        return Encryption.hash256(self._decrypt_key())
+
