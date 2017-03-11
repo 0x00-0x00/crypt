@@ -185,7 +185,7 @@ unsigned char *b64_decode (const char *src, size_t len) {
 
 unsigned int genrand(int seed)
 {
-    srand(time(NULL)); // Generate seed generator ///
+    srand(time(NULL) + seed - 1); // Generate seed generator ///
     unsigned int x,y,z,c;
     x = (rand() * 23231313 + seed);
     y = (x + 331987663);
@@ -214,7 +214,14 @@ int main(int argc, char* argv[])
     char* base64 = malloc(sizeof(char) * (keysize*2));
     for(unsigned int i = 0; i < keysize; i ++)
     {
-        r = genrand(i);
+        if(i % 2 == 0) {
+            r = genrand(i + (i * i+6));
+        } else if (i % 3 == 0) {
+            r = genrand(i +  (13 + i+1));
+        } else {
+            r = genrand(i + (54 - i));
+        }
+
         memcpy(&key[i], &r, sizeof(unsigned int));
         sprintf((char*)&bytearray[i], "%s", (char*)&key[i]);
         memset(&key[i], 0x0, 0x1); // clean the memory *key;
