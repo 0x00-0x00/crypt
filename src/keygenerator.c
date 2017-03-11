@@ -214,12 +214,12 @@ int main(int argc, char* argv[])
     char* base64 = malloc(sizeof(char) * (keysize*2));
     for(unsigned int i = 0; i < keysize; i ++)
     {
-        if(i % 2 == 0) {
+        if(i % 4 == 0) {
             r = genrand(i + (i * i+6));
         } else if (i % 3 == 0) {
             r = genrand(i +  (13 + i+1));
         } else {
-            r = genrand(i + (54 - i));
+            r = genrand(i + (54 - (i % 32)));
         }
 
         memcpy(&key[i], &r, sizeof(unsigned int));
